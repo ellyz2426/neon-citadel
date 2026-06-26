@@ -31,6 +31,8 @@ interface RuntimeInput {
 type Screen = 'title' | 'playing' | 'paused' | 'gameover' | 'wave-complete' | 'tower-select' | 'help' | 'achievements';
 type TowerType = 'laser' | 'pulse' | 'slow' | 'sniper' | 'chain';
 type EnemyType = 'grunt' | 'fast' | 'tank' | 'boss' | 'swarm' | 'ghost';
+type Difficulty = 'easy' | 'normal' | 'hard';
+type TargetMode = 'first' | 'last' | 'strongest' | 'weakest';
 
 interface TowerDef {
   name: string;
@@ -63,6 +65,10 @@ interface Tower {
   barrelMesh: Mesh;
   rangeMesh: Mesh | null;
   totalDamageDealt: number;
+  targetMode: TargetMode;
+  dps: number;
+  dpsWindow: number[];
+  lastDpsUpdate: number;
 }
 
 interface Enemy {
@@ -137,6 +143,16 @@ const ACHIEVEMENT_DEFS: AchievementDef[] = [
   { id: 'speed-demon', name: 'Speed Demon', desc: 'Play at 3x speed', check: g => g.gameSpeed >= 3 },
   { id: 'recycler', name: 'Recycler', desc: 'Sell 3 towers in one game', check: g => g.towersSoldThisGame >= 3 },
   { id: 'perfectionist', name: 'Perfectionist', desc: 'Score 5000+ points', check: g => g.score >= 5000 },
+  { id: 'combo-king', name: 'Combo King', desc: 'Get a 5x kill combo', check: g => g.maxCombo >= 5 },
+  { id: 'last-stand', name: 'Last Stand', desc: 'Win with 1 life left', check: g => g.wave >= TOTAL_WAVES && g.lives === 1 },
+  { id: 'genocide', name: 'Genocide', desc: '100 kills in one game', check: g => g.totalKills >= 100 },
+  { id: 'full-grid', name: 'Full Grid', desc: 'Place 20+ towers', check: g => g.towersPlacedThisGame >= 20 },
+  { id: 'triple-max', name: 'Triple Max', desc: '3 max-level towers at once', check: g => g.towers.filter(t => t.level >= 3).length >= 3 },
+  { id: 'no-sell', name: 'No Sell', desc: 'Win without selling', check: g => g.wave >= TOTAL_WAVES && g.towersSoldThisGame === 0 },
+  { id: 'big-spender', name: 'Big Spender', desc: 'Spend 2000+ gold', check: g => g.totalGoldSpent >= 2000 },
+  { id: 'laser-focus', name: 'Laser Focus', desc: '30 kills with Laser towers', check: g => g.towerKillsByType.laser >= 30 },
+  { id: 'fortress', name: 'Fortress', desc: 'Have 15 towers at once', check: g => g.towers.length >= 15 },
+  { id: 'hard-won', name: 'Hard Won', desc: 'Beat game on Hard', check: g => g.wave >= TOTAL_WAVES && g.difficulty === 'hard' },
 ];
 
 // ============================================================
@@ -149,6 +165,12 @@ const BOARD_Y = 0.85;
 const START_GOLD = 150;
 const START_LIVES = 20;
 const UPGRADE_COST_MULT = 1.5;
+
+const DIFFICULTY_MULTS: Record<Difficulty, { hpMult: number; speedMult: number; rewardMult: number; startGold: number; startLives: number }> = {
+  easy:   { hpMult: 0.7,  speedMult: 0.85, rewardMult: 1.3, startGold: 200, startLives: 30 },
+  normal: { hpMult: 1.0,  speedMult: 1.0,  rewardMult: 1.0, startGold: 150, startLives: 20 },
+  hard:   { hpMult: 1.5,  speedMult: 1.2,  rewardMult: 0.8, startGold: 100, startLives: 15 },
+};
 
 const PATH_COORDS: [number, number][] = [
   [0, 5], [1, 5], [2, 5], [2, 4], [2, 3], [2, 2],
@@ -263,6 +285,7 @@ class GameState {
   gameSpeed = 1;
   save: Save;
   selectedTower: Tower | null = null;
+  difficulty: Difficulty = 'normal';
 
   // Achievement tracking
   towersPlacedThisGame = 0;
@@ -270,10 +293,17 @@ class GameState {
   towerKillsByType: Record<TowerType, number> = { laser: 0, pulse: 0, slow: 0, sniper: 0, chain: 0 };
   enemiesSlowed = 0;
   totalGoldEarned = 0;
+  totalGoldSpent = 0;
   wavePerfect = true;
   bossKills = 0;
   ghostKills = 0;
   waveLeaks = 0;
+
+  // Combo system
+  comboCount = 0;
+  comboTimer = 0;
+  maxCombo = 0;
+  comboScore = 0;
 
   // Wave announce
   waveAnnounceTimer = 0;
@@ -312,10 +342,15 @@ class GameState {
     this.towerKillsByType = { laser: 0, pulse: 0, slow: 0, sniper: 0, chain: 0 };
     this.enemiesSlowed = 0;
     this.totalGoldEarned = 0;
+    this.totalGoldSpent = 0;
     this.wavePerfect = true;
     this.bossKills = 0;
     this.ghostKills = 0;
     this.waveLeaks = 0;
+    this.comboCount = 0;
+    this.comboTimer = 0;
+    this.maxCombo = 0;
+    this.comboScore = 0;
     this.pendingAchievements = [];
   }
 }
@@ -682,9 +717,10 @@ class GameLogic {
   }
 
   startGame(): void {
+    const diffSettings = DIFFICULTY_MULTS[this.game.difficulty];
     this.game.screen = 'playing';
-    this.game.gold = START_GOLD;
-    this.game.lives = START_LIVES;
+    this.game.gold = diffSettings.startGold;
+    this.game.lives = diffSettings.startLives;
     this.game.wave = 0;
     this.game.score = 0;
     this.game.totalKills = 0;
@@ -748,6 +784,7 @@ class GameLogic {
     if (this.game.gold < def.cost || !this.game.canPlace(r, c)) return false;
 
     this.game.gold -= def.cost;
+    this.game.totalGoldSpent += def.cost;
     const pos = this.game.gridToWorld(r, c);
     const { group, barrelMesh } = this.scene.createTowerMesh(type, pos);
     this.scene.towerGroup.add(group);
@@ -761,6 +798,7 @@ class GameLogic {
     const tower: Tower = {
       type, gridR: r, gridC: c, group, barrelMesh, rangeMesh,
       cooldown: 0, level: 1, kills: 0, targetEntity: null, totalDamageDealt: 0,
+      targetMode: 'first', dps: 0, dpsWindow: [], lastDpsUpdate: 0,
     };
     this.game.towers.push(tower);
     this.game.grid[r][c] = tower;
@@ -773,6 +811,7 @@ class GameLogic {
     const cost = Math.floor(TOWER_DEFS[tower.type].cost * UPGRADE_COST_MULT * tower.level);
     if (this.game.gold < cost || tower.level >= 3) return false;
     this.game.gold -= cost;
+    this.game.totalGoldSpent += cost;
     tower.level++;
     tower.group.scale.setScalar(1 + (tower.level - 1) * 0.15);
 
@@ -804,13 +843,16 @@ class GameLogic {
   spawnEnemy(type: EnemyType): void {
     const def = ENEMY_DEFS[type];
     const waveScale = 1 + this.game.wave * 0.15;
+    const diffMult = DIFFICULTY_MULTS[this.game.difficulty];
     const { group, healthBar, healthBg } = this.scene.createEnemyMesh(type);
     const startPos = this.game.gridToWorld(PATH_COORDS[0][0], PATH_COORDS[0][1]);
     group.position.copy(startPos);
     this.scene.enemyGroup.add(group);
+    const scaledHp = Math.floor(def.hp * waveScale * diffMult.hpMult);
+    const scaledReward = Math.floor(def.reward * diffMult.rewardMult);
     const enemy: Enemy = {
-      type, hp: Math.floor(def.hp * waveScale), maxHp: Math.floor(def.hp * waveScale),
-      speed: def.speed, reward: def.reward,
+      type, hp: scaledHp, maxHp: scaledHp,
+      speed: def.speed * diffMult.speedMult, reward: scaledReward,
       pathIdx: 0, pathProgress: 0,
       group, healthBar, healthBg,
       slowTimer: 0, alive: true,
@@ -874,34 +916,67 @@ class GameLogic {
   updateTowers(delta: number): void {
     for (const tower of this.game.towers) {
       tower.cooldown = Math.max(0, tower.cooldown - delta);
+
+      // Update DPS tracking
+      const now = performance.now() / 1000;
+      tower.dpsWindow = tower.dpsWindow.filter(t => now - t < 5);
+      if (now - tower.lastDpsUpdate > 0.5) {
+        const windowSecs = tower.dpsWindow.length > 0 ? Math.min(5, now - tower.dpsWindow[0]) : 5;
+        const totalDmgInWindow = tower.dpsWindow.length;
+        tower.dps = windowSecs > 0 ? (totalDmgInWindow / windowSecs) : 0;
+        tower.lastDpsUpdate = now;
+      }
+
       if (tower.cooldown > 0) continue;
 
       const def = TOWER_DEFS[tower.type];
       const range = def.range * CELL_SIZE * (1 + (tower.level - 1) * 0.2);
       const tPos = this.game.gridToWorld(tower.gridR, tower.gridC);
 
-      let nearest: Enemy | null = null;
-      let nearDist = Infinity;
+      // Target selection based on targeting mode
+      let target: Enemy | null = null;
+      const inRange: Enemy[] = [];
       for (const enemy of this.game.enemies) {
         if (!enemy.alive) continue;
         const dist = tPos.distanceTo(enemy.group.position);
-        if (dist <= range && dist < nearDist) {
-          nearest = enemy;
-          nearDist = dist;
+        if (dist <= range) inRange.push(enemy);
+      }
+
+      if (inRange.length > 0) {
+        switch (tower.targetMode) {
+          case 'first':
+            target = inRange.reduce((best, e) =>
+              e.pathIdx > best.pathIdx || (e.pathIdx === best.pathIdx && e.pathProgress > best.pathProgress) ? e : best
+            );
+            break;
+          case 'last':
+            target = inRange.reduce((best, e) =>
+              e.pathIdx < best.pathIdx || (e.pathIdx === best.pathIdx && e.pathProgress < best.pathProgress) ? e : best
+            );
+            break;
+          case 'strongest':
+            target = inRange.reduce((best, e) => e.hp > best.hp ? e : best);
+            break;
+          case 'weakest':
+            target = inRange.reduce((best, e) => e.hp < best.hp ? e : best);
+            break;
         }
       }
-      if (!nearest) continue;
+      if (!target) continue;
 
       tower.cooldown = 1 / (def.fireRate * (1 + (tower.level - 1) * 0.15));
-      tower.targetEntity = nearest;
+      tower.targetEntity = target;
 
       // Aim barrel at target
-      const dir = new Vector3().subVectors(nearest.group.position, tower.group.position);
+      const dir = new Vector3().subVectors(target.group.position, tower.group.position);
       tower.barrelMesh.lookAt(
         tower.barrelMesh.position.clone().add(new Vector3(dir.x, 0, dir.z).normalize())
       );
 
       const damage = def.damage * (1 + (tower.level - 1) * 0.4);
+
+      // Track DPS window
+      tower.dpsWindow.push(performance.now() / 1000);
 
       if (tower.type === 'pulse') {
         for (const enemy of this.game.enemies) {
@@ -924,7 +999,7 @@ class GameLogic {
           }
         }
       } else if (tower.type === 'chain') {
-        let chainTarget: Enemy | null = nearest;
+        let chainTarget: Enemy | null = target;
         const hit = new Set<Enemy>();
         for (let i = 0; i < 3 && chainTarget; i++) {
           hit.add(chainTarget);
@@ -947,7 +1022,11 @@ class GameLogic {
           chainTarget = nextNearest;
         }
       } else {
-        this.fireProjectile(tPos.clone().setY(BOARD_Y + 0.07), nearest, tower.type, damage);
+        // For laser and sniper: create a beam effect
+        this.fireProjectile(tPos.clone().setY(BOARD_Y + 0.07), target, tower.type, damage);
+        if (tower.type === 'laser') {
+          this.createBeamEffect(tPos.clone().setY(BOARD_Y + 0.07), target.group.position.clone(), new Color(def.color));
+        }
       }
     }
   }
@@ -990,6 +1069,38 @@ class GameLogic {
     requestAnimationFrame(update);
   }
 
+  createBeamEffect(from: Vector3, to: Vector3, color: Color): void {
+    const direction = new Vector3().subVectors(to, from);
+    const length = direction.length();
+    const midpoint = from.clone().add(direction.multiplyScalar(0.5));
+
+    const beamGeo = new CylinderGeometry(0.002, 0.002, length, 4);
+    const beamMat = new MeshBasicMaterial({
+      color, transparent: true, opacity: 0.8,
+      blending: AdditiveBlending,
+    });
+    const beam = new Mesh(beamGeo, beamMat);
+    beam.position.copy(midpoint);
+    beam.lookAt(to);
+    beam.rotateX(Math.PI / 2);
+
+    this.scene.effectsGroup.add(beam);
+
+    let life = 0.15;
+    const fadeBeam = () => {
+      life -= 0.016;
+      beamMat.opacity = Math.max(0, life / 0.15) * 0.8;
+      if (life <= 0) {
+        this.scene.effectsGroup.remove(beam);
+        beamGeo.dispose();
+        beamMat.dispose();
+      } else {
+        requestAnimationFrame(fadeBeam);
+      }
+    };
+    requestAnimationFrame(fadeBeam);
+  }
+
   updateProjectiles(delta: number): void {
     const toRemove: Projectile[] = [];
     for (const proj of this.game.projectiles) {
@@ -1024,9 +1135,24 @@ class GameLogic {
       enemy.alive = false;
       this.game.gold += enemy.reward;
       this.game.totalGoldEarned += enemy.reward;
-      this.game.score += enemy.reward * 2;
       this.game.totalKills++;
       this.game.waveEnemiesRemaining--;
+
+      // Combo system: kills within 1.5s increase combo
+      this.game.comboCount++;
+      this.game.comboTimer = 1.5;
+      if (this.game.comboCount > this.game.maxCombo) {
+        this.game.maxCombo = this.game.comboCount;
+      }
+
+      // Combo bonus: extra score and gold for streaks
+      const comboMult = Math.min(this.game.comboCount, 10);
+      const comboBonus = Math.floor(enemy.reward * (comboMult - 1) * 0.2);
+      this.game.gold += comboBonus;
+      this.game.totalGoldEarned += comboBonus;
+      this.game.comboScore += comboBonus;
+
+      this.game.score += enemy.reward * 2 + comboBonus;
 
       // Track tower kills
       if (tower) {
@@ -1196,6 +1322,15 @@ class GameLogic {
       }
     }
 
+    // Combo timer decay (always ticks even during pause)
+    if (this.game.comboTimer > 0) {
+      this.game.comboTimer -= delta;
+      if (this.game.comboTimer <= 0) {
+        this.game.comboCount = 0;
+        this.game.comboTimer = 0;
+      }
+    }
+
     if (this.game.screen !== 'playing' || this.game.paused) return;
     const dt = delta * this.game.gameSpeed;
     this.updateSpawning(dt);
@@ -1261,6 +1396,17 @@ class UIManager {
       this.updateVisibility();
     });
 
+    // Difficulty buttons
+    const difficulties: Difficulty[] = ['easy', 'normal', 'hard'];
+    for (const diff of difficulties) {
+      const btn = doc.getElementById(`btn-${diff}`) as UIKit.Text | undefined;
+      btn?.addEventListener('click', () => {
+        this.game.difficulty = diff;
+        this.updateDifficultyButtons();
+      });
+    }
+    this.updateDifficultyButtons();
+
     const statsText = doc.getElementById('stats-text') as UIKit.Text | undefined;
     const s = this.game.save;
     statsText?.setProperties({
@@ -1271,6 +1417,24 @@ class UIManager {
     achCountText?.setProperties({
       text: `${s.achievements.length}/${ACHIEVEMENT_DEFS.length} Achievements`,
     });
+  }
+
+  updateDifficultyButtons(): void {
+    if (!this.titleDoc) return;
+    const diffs: { id: Difficulty; color: string; borderColor: string; activeColor: string; activeBorder: string }[] = [
+      { id: 'easy', color: '#44ff44', borderColor: '#226622', activeColor: '#003300', activeBorder: '#44ff44' },
+      { id: 'normal', color: '#00ccff', borderColor: '#0066aa', activeColor: '#002244', activeBorder: '#00ccff' },
+      { id: 'hard', color: '#ff4444', borderColor: '#663333', activeColor: '#330000', activeBorder: '#ff4444' },
+    ];
+    for (const d of diffs) {
+      const btn = this.titleDoc.getElementById(`btn-${d.id}`) as UIKit.Text | undefined;
+      const isActive = this.game.difficulty === d.id;
+      btn?.setProperties({
+        borderWidth: isActive ? 2 : 1,
+        borderColor: isActive ? d.activeBorder : d.borderColor,
+        backgroundColor: isActive ? d.activeColor : '#112233',
+      });
+    }
   }
 
   bindHud(doc: UIKitDocument, entity: any): void {
@@ -1361,6 +1525,15 @@ class UIManager {
       this.logic.deselectTower();
       this.updateVisibility();
     });
+    const btnTarget = doc.getElementById('btn-target') as UIKit.Text | undefined;
+    btnTarget?.addEventListener('click', () => {
+      if (this.game.selectedTower) {
+        const modes: TargetMode[] = ['first', 'last', 'strongest', 'weakest'];
+        const idx = modes.indexOf(this.game.selectedTower.targetMode);
+        this.game.selectedTower.targetMode = modes[(idx + 1) % modes.length];
+        this.updateTowerInfo();
+      }
+    });
   }
 
   bindAchievements(doc: UIKitDocument, entity: any): void {
@@ -1390,10 +1563,23 @@ class UIManager {
     setText('score-text', `Score: ${this.game.score}`);
     setText('kills-text', `Kills: ${this.game.totalKills}`);
     setText('speed-text', `${this.game.gameSpeed}x`);
+    setText('diff-text', this.game.difficulty.toUpperCase());
 
     const selected = this.game.selectedTowerType;
     const def = TOWER_DEFS[selected];
     setText('selected-text', `[${def.name}] $${def.cost} | DMG:${def.damage} | RNG:${def.range}`);
+
+    // Combo display
+    if (this.game.comboCount >= 2) {
+      const comboEl = this.hudDoc.getElementById('combo-text') as UIKit.Text | undefined;
+      comboEl?.setProperties({
+        text: `${this.game.comboCount}x COMBO!`,
+        color: this.game.comboCount >= 8 ? '#ff00ff' : this.game.comboCount >= 5 ? '#ff8800' : '#ffcc00',
+      });
+    } else {
+      const comboEl = this.hudDoc.getElementById('combo-text') as UIKit.Text | undefined;
+      comboEl?.setProperties({ text: '' });
+    }
 
     // Achievement notification
     if (this.game.pendingAchievements.length > 0) {
@@ -1446,6 +1632,17 @@ class UIManager {
     setText('tower-fire-rate', `Fire Rate: ${fireRate.toFixed(1)}/s`);
     setText('tower-kills', `Kills: ${tower.kills} | DMG: ${Math.floor(tower.totalDamageDealt)}`);
 
+    // DPS display
+    const theoreticalDps = damage * fireRate;
+    setText('tower-dps', `DPS: ${theoreticalDps.toFixed(1)} (${tower.dps > 0 ? tower.dps.toFixed(1) : '0'} actual)`);
+
+    // Target mode button
+    const targetModeNames: Record<TargetMode, string> = {
+      first: 'First', last: 'Last', strongest: 'Strongest', weakest: 'Weakest',
+    };
+    const btnTarget = this.towerInfoDoc.getElementById('btn-target') as UIKit.Text | undefined;
+    btnTarget?.setProperties({ text: `Target: ${targetModeNames[tower.targetMode]}` });
+
     const btnUpgrade = this.towerInfoDoc.getElementById('btn-upgrade') as UIKit.Text | undefined;
     if (tower.level >= 3) {
       btnUpgrade?.setProperties({ text: 'MAX LEVEL', backgroundColor: '#333333' });
@@ -1469,9 +1666,9 @@ class UIManager {
       el?.setProperties({ text });
     };
     setText('result-text', won ? 'VICTORY!' : 'CITADEL FELL');
-    setText('final-score', `Score: ${this.game.score}`);
+    setText('final-score', `Score: ${this.game.score} (${this.game.difficulty.toUpperCase()})`);
     setText('final-wave', `Wave: ${this.game.wave}/${TOTAL_WAVES}`);
-    setText('final-kills', `Kills: ${this.game.totalKills}`);
+    setText('final-kills', `Kills: ${this.game.totalKills} | Max Combo: ${this.game.maxCombo}x`);
     setText('final-ach', `New Achievements: ${this.game.pendingAchievements.length > 0 ? this.game.pendingAchievements.join(', ') : 'None'}`);
   }
 

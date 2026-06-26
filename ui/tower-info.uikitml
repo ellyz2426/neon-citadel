@@ -56,6 +56,12 @@
       fontSize="11"
       color="#88aacc"
     >Kills: 0</text>
+
+    <text
+      name="tower-dps"
+      fontSize="10"
+      color="#66aacc"
+    >DPS: 0</text>
   </container>
 
   <container
@@ -64,6 +70,19 @@
     width="176"
     marginTop="4"
   >
+    <text
+      name="btn-target"
+      fontSize="10"
+      color="#88ccee"
+      backgroundColor="#112233"
+      padding="6"
+      borderRadius="4"
+      borderColor="#334455"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+    >Target: First</text>
+
     <text
       name="btn-upgrade"
       fontSize="12"

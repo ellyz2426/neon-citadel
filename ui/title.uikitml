@@ -33,12 +33,70 @@
     fontSize="10"
     color="#ffcc00"
     marginTop="2"
-  >0/20 Achievements</text>
+  >0/30 Achievements</text>
+
+  <container
+    flexDirection="column"
+    gap="4"
+    marginTop="8"
+    width="280"
+  >
+    <text
+      fontSize="11"
+      color="#66aacc"
+      textAlign="center"
+    >DIFFICULTY</text>
+    <container
+      flexDirection="row"
+      gap="6"
+      justifyContent="center"
+    >
+      <text
+        name="btn-easy"
+        fontSize="11"
+        color="#44ff44"
+        backgroundColor="#112211"
+        padding="6"
+        borderRadius="4"
+        borderColor="#226622"
+        borderWidth="1"
+        textAlign="center"
+        cursor="pointer"
+        width="80"
+      >EASY</text>
+      <text
+        name="btn-normal"
+        fontSize="11"
+        color="#00ccff"
+        backgroundColor="#002244"
+        padding="6"
+        borderRadius="4"
+        borderColor="#0066aa"
+        borderWidth="2"
+        textAlign="center"
+        cursor="pointer"
+        width="80"
+      >NORMAL</text>
+      <text
+        name="btn-hard"
+        fontSize="11"
+        color="#ff4444"
+        backgroundColor="#221111"
+        padding="6"
+        borderRadius="4"
+        borderColor="#663333"
+        borderWidth="1"
+        textAlign="center"
+        cursor="pointer"
+        width="80"
+      >HARD</text>
+    </container>
+  </container>
 
   <container
     flexDirection="column"
     gap="8"
-    marginTop="16"
+    marginTop="8"
     width="280"
   >
     <text

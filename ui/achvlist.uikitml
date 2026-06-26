@@ -19,7 +19,7 @@
     name="ach-count"
     fontSize="11"
     color="#88aacc"
-  >0 / 20 Unlocked</text>
+  >0 / 30 Unlocked</text>
 
   <container
     flexDirection="column"
@@ -35,18 +35,28 @@
     <text name="ach-5" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Wave 15 - Survive 15 waves</text>
     <text name="ach-6" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Wave 20 - Survive 20 waves</text>
     <text name="ach-7" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Champion - Beat all 25 waves</text>
-    <text name="ach-8" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Sniper Elite - Get 10 kills with Sniper</text>
-    <text name="ach-9" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Chain Master - Get 20 kills with Chain</text>
-    <text name="ach-10" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Pulse Storm - Get 15 kills with Pulse</text>
+    <text name="ach-8" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Sniper Elite - 10 kills with Sniper</text>
+    <text name="ach-9" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Chain Master - 20 kills with Chain</text>
+    <text name="ach-10" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Pulse Storm - 15 kills with Pulse</text>
     <text name="ach-11" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Ice Age - Slow 50 enemies total</text>
-    <text name="ach-12" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Midas Touch - Earn 1000 gold in one game</text>
-    <text name="ach-13" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Untouchable - Complete a wave with no leaks</text>
-    <text name="ach-14" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Maxed Out - Upgrade a tower to Level 3</text>
+    <text name="ach-12" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Midas Touch - Earn 1000 gold</text>
+    <text name="ach-13" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Untouchable - Wave with no leaks</text>
+    <text name="ach-14" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Maxed Out - Tower to Level 3</text>
     <text name="ach-15" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Boss Slayer - Kill a Boss enemy</text>
     <text name="ach-16" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Ghost Buster - Kill 5 Ghost enemies</text>
     <text name="ach-17" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Speed Demon - Play at 3x speed</text>
     <text name="ach-18" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Recycler - Sell 3 towers in one game</text>
     <text name="ach-19" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Perfectionist - Score 5000+ points</text>
+    <text name="ach-20" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Combo King - Get a 5x kill combo</text>
+    <text name="ach-21" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Last Stand - Win with 1 life left</text>
+    <text name="ach-22" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Genocide - 100 kills in one game</text>
+    <text name="ach-23" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Full Grid - Place 20+ towers</text>
+    <text name="ach-24" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Triple Max - 3 max-level towers at once</text>
+    <text name="ach-25" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">No Sell - Win without selling</text>
+    <text name="ach-26" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Big Spender - Spend 2000+ gold</text>
+    <text name="ach-27" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Laser Focus - 30 kills with Laser</text>
+    <text name="ach-28" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Fortress - Have 15 towers at once</text>
+    <text name="ach-29" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Hard Won - Beat game on Hard</text>
   </container>
 
   <text
