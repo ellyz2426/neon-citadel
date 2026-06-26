@@ -1,0 +1,31 @@
+<container
+  flexDirection="column"
+  alignItems="center"
+  justifyContent="center"
+  gap="6"
+  width="300"
+  padding="16"
+  backgroundColor="#0a1520cc"
+  borderRadius="10"
+  borderColor="#00ffff"
+  borderWidth="2"
+>
+  <text
+    name="wave-announce"
+    fontSize="24"
+    fontWeight="bold"
+    color="#00ffff"
+  >WAVE 1</text>
+
+  <text
+    name="wave-desc"
+    fontSize="12"
+    color="#88ccee"
+  >Incoming enemies!</text>
+
+  <text
+    name="wave-enemies"
+    fontSize="10"
+    color="#ffaa00"
+  >4 Grunts</text>
+</container>

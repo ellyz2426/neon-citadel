@@ -40,6 +40,13 @@
       fontSize="14"
       color="#88aacc"
     >Kills: 0</text>
+
+    <text
+      name="final-ach"
+      fontSize="11"
+      color="#ffcc00"
+      marginTop="4"
+    >New Achievements: None</text>
   </container>
 
   <container

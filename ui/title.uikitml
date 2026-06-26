@@ -28,6 +28,13 @@
     marginTop="8"
   >Best Wave: 0 | Kills: 0 | Wins: 0</text>
 
+  <text
+    name="ach-count-title"
+    fontSize="10"
+    color="#ffcc00"
+    marginTop="2"
+  >0/20 Achievements</text>
+
   <container
     flexDirection="column"
     gap="8"
@@ -62,5 +69,19 @@
       cursor="pointer"
       hover-backgroundColor="#223344"
     >HOW TO PLAY</text>
+
+    <text
+      name="btn-achievements"
+      fontSize="14"
+      color="#ffcc00"
+      backgroundColor="#1a1a00"
+      padding="8"
+      borderRadius="6"
+      borderColor="#665500"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+      hover-backgroundColor="#332200"
+    >ACHIEVEMENTS</text>
   </container>
 </container>

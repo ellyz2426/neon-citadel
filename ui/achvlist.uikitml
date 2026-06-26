@@ -1,0 +1,66 @@
+<container
+  flexDirection="column"
+  alignItems="center"
+  gap="8"
+  width="420"
+  padding="16"
+  backgroundColor="#0a1520ee"
+  borderRadius="12"
+  borderColor="#ffcc00"
+  borderWidth="1"
+>
+  <text
+    fontSize="20"
+    fontWeight="bold"
+    color="#ffcc00"
+  >ACHIEVEMENTS</text>
+
+  <text
+    name="ach-count"
+    fontSize="11"
+    color="#88aacc"
+  >0 / 20 Unlocked</text>
+
+  <container
+    flexDirection="column"
+    gap="4"
+    width="388"
+    marginTop="4"
+  >
+    <text name="ach-0" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">First Blood - Kill your first enemy</text>
+    <text name="ach-1" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Builder - Place 5 towers in one game</text>
+    <text name="ach-2" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Architect - Place 10 towers in one game</text>
+    <text name="ach-3" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Wave 5 - Survive 5 waves</text>
+    <text name="ach-4" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Wave 10 - Survive 10 waves</text>
+    <text name="ach-5" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Wave 15 - Survive 15 waves</text>
+    <text name="ach-6" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Wave 20 - Survive 20 waves</text>
+    <text name="ach-7" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Champion - Beat all 25 waves</text>
+    <text name="ach-8" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Sniper Elite - Get 10 kills with Sniper</text>
+    <text name="ach-9" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Chain Master - Get 20 kills with Chain</text>
+    <text name="ach-10" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Pulse Storm - Get 15 kills with Pulse</text>
+    <text name="ach-11" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Ice Age - Slow 50 enemies total</text>
+    <text name="ach-12" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Midas Touch - Earn 1000 gold in one game</text>
+    <text name="ach-13" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Untouchable - Complete a wave with no leaks</text>
+    <text name="ach-14" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Maxed Out - Upgrade a tower to Level 3</text>
+    <text name="ach-15" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Boss Slayer - Kill a Boss enemy</text>
+    <text name="ach-16" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Ghost Buster - Kill 5 Ghost enemies</text>
+    <text name="ach-17" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Speed Demon - Play at 3x speed</text>
+    <text name="ach-18" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Recycler - Sell 3 towers in one game</text>
+    <text name="ach-19" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Perfectionist - Score 5000+ points</text>
+  </container>
+
+  <text
+    name="btn-close-ach"
+    fontSize="14"
+    color="#00ffcc"
+    backgroundColor="#003344"
+    padding="8"
+    borderRadius="6"
+    borderColor="#00aa88"
+    borderWidth="1"
+    textAlign="center"
+    cursor="pointer"
+    marginTop="8"
+    width="160"
+  >CLOSE</text>
+</container>

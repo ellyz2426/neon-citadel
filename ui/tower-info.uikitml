@@ -1,0 +1,103 @@
+<container
+  flexDirection="column"
+  alignItems="center"
+  gap="8"
+  width="200"
+  padding="12"
+  backgroundColor="#0a1520ee"
+  borderRadius="8"
+  borderColor="#00ccff"
+  borderWidth="1"
+>
+  <text
+    name="tower-name"
+    fontSize="14"
+    fontWeight="bold"
+    color="#00ffff"
+  >Tower Info</text>
+
+  <container
+    flexDirection="column"
+    gap="4"
+    width="176"
+  >
+    <text
+      name="tower-type"
+      fontSize="11"
+      color="#88ccee"
+    >Type: Laser</text>
+
+    <text
+      name="tower-level"
+      fontSize="11"
+      color="#88ccee"
+    >Level: 1/3</text>
+
+    <text
+      name="tower-damage"
+      fontSize="11"
+      color="#ff8844"
+    >Damage: 10</text>
+
+    <text
+      name="tower-range"
+      fontSize="11"
+      color="#44aaff"
+    >Range: 2.5</text>
+
+    <text
+      name="tower-fire-rate"
+      fontSize="11"
+      color="#ffcc00"
+    >Fire Rate: 2.0/s</text>
+
+    <text
+      name="tower-kills"
+      fontSize="11"
+      color="#88aacc"
+    >Kills: 0</text>
+  </container>
+
+  <container
+    flexDirection="column"
+    gap="6"
+    width="176"
+    marginTop="4"
+  >
+    <text
+      name="btn-upgrade"
+      fontSize="12"
+      fontWeight="bold"
+      color="#00ffcc"
+      backgroundColor="#003344"
+      padding="8"
+      borderRadius="4"
+      borderColor="#00aa88"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+    >Upgrade ($75)</text>
+
+    <text
+      name="btn-sell"
+      fontSize="12"
+      color="#ff6666"
+      backgroundColor="#221111"
+      padding="8"
+      borderRadius="4"
+      borderColor="#663333"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+    >Sell ($30)</text>
+
+    <text
+      name="btn-close-info"
+      fontSize="10"
+      color="#446688"
+      textAlign="center"
+      cursor="pointer"
+      padding="4"
+    >Close</text>
+  </container>
+</container>
