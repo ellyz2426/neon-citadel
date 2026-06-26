@@ -1,0 +1,66 @@
+<container
+  flexDirection="column"
+  alignItems="center"
+  justifyContent="center"
+  gap="12"
+  width="400"
+  padding="20"
+  backgroundColor="#0a1520ee"
+  borderRadius="12"
+  borderColor="#00ccff"
+  borderWidth="1"
+>
+  <text
+    fontSize="28"
+    fontWeight="bold"
+    color="#00ffff"
+  >NEON CITADEL</text>
+
+  <text
+    fontSize="14"
+    color="#66aacc"
+  >-- Tower Defense VR --</text>
+
+  <text
+    name="stats-text"
+    fontSize="11"
+    color="#446688"
+    marginTop="8"
+  >Best Wave: 0 | Kills: 0 | Wins: 0</text>
+
+  <container
+    flexDirection="column"
+    gap="8"
+    marginTop="16"
+    width="280"
+  >
+    <text
+      name="btn-start"
+      fontSize="18"
+      fontWeight="bold"
+      color="#00ffcc"
+      backgroundColor="#003344"
+      padding="10"
+      borderRadius="6"
+      borderColor="#00aa88"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+      hover-backgroundColor="#004455"
+    >START GAME</text>
+
+    <text
+      name="btn-help"
+      fontSize="14"
+      color="#6688aa"
+      backgroundColor="#112233"
+      padding="8"
+      borderRadius="6"
+      borderColor="#334455"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+      hover-backgroundColor="#223344"
+    >HOW TO PLAY</text>
+  </container>
+</container>

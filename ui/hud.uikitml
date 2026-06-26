@@ -1,0 +1,51 @@
+<container
+  flexDirection="row"
+  alignItems="center"
+  justifyContent="space-between"
+  gap="16"
+  width="600"
+  padding="8"
+  backgroundColor="#0a1520cc"
+  borderRadius="8"
+  borderColor="#004466"
+  borderWidth="1"
+>
+  <text
+    name="gold-text"
+    fontSize="13"
+    fontWeight="bold"
+    color="#ffcc00"
+  >Gold: 150</text>
+
+  <text
+    name="lives-text"
+    fontSize="13"
+    fontWeight="bold"
+    color="#ff4444"
+  >Lives: 20</text>
+
+  <text
+    name="wave-text"
+    fontSize="13"
+    fontWeight="bold"
+    color="#00ccff"
+  >Wave: 1/25</text>
+
+  <text
+    name="score-text"
+    fontSize="12"
+    color="#88aacc"
+  >Score: 0</text>
+
+  <text
+    name="kills-text"
+    fontSize="12"
+    color="#88aacc"
+  >Kills: 0</text>
+
+  <text
+    name="selected-text"
+    fontSize="10"
+    color="#44aaff"
+  >[Laser] $50 | DMG:10 | RNG:2.5</text>
+</container>

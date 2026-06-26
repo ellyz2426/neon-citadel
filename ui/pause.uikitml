@@ -1,0 +1,52 @@
+<container
+  flexDirection="column"
+  alignItems="center"
+  justifyContent="center"
+  gap="12"
+  width="320"
+  padding="20"
+  backgroundColor="#0a1520ee"
+  borderRadius="12"
+  borderColor="#ffaa00"
+  borderWidth="1"
+>
+  <text
+    fontSize="22"
+    fontWeight="bold"
+    color="#ffaa00"
+  >PAUSED</text>
+
+  <container
+    flexDirection="column"
+    gap="8"
+    marginTop="12"
+    width="220"
+  >
+    <text
+      name="btn-resume"
+      fontSize="16"
+      fontWeight="bold"
+      color="#00ffcc"
+      backgroundColor="#003344"
+      padding="10"
+      borderRadius="6"
+      borderColor="#00aa88"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+    >RESUME</text>
+
+    <text
+      name="btn-quit"
+      fontSize="14"
+      color="#ff6666"
+      backgroundColor="#221111"
+      padding="8"
+      borderRadius="6"
+      borderColor="#663333"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+    >QUIT TO MENU</text>
+  </container>
+</container>

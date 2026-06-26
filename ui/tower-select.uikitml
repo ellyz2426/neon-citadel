@@ -1,0 +1,105 @@
+<container
+  flexDirection="column"
+  alignItems="stretch"
+  gap="6"
+  width="180"
+  padding="10"
+  backgroundColor="#0a1520dd"
+  borderRadius="8"
+  borderColor="#004466"
+  borderWidth="1"
+>
+  <text
+    fontSize="12"
+    fontWeight="bold"
+    color="#00ccff"
+    textAlign="center"
+  >TOWERS</text>
+
+  <text
+    name="btn-laser"
+    fontSize="11"
+    color="#00ffff"
+    backgroundColor="#112233"
+    padding="6"
+    borderRadius="4"
+    borderColor="#004466"
+    borderWidth="1"
+    textAlign="center"
+    cursor="pointer"
+  >Laser ($50)</text>
+
+  <text
+    name="btn-pulse"
+    fontSize="11"
+    color="#ff4488"
+    backgroundColor="#112233"
+    padding="6"
+    borderRadius="4"
+    borderColor="#442244"
+    borderWidth="1"
+    textAlign="center"
+    cursor="pointer"
+  >Pulse ($80)</text>
+
+  <text
+    name="btn-slow"
+    fontSize="11"
+    color="#44aaff"
+    backgroundColor="#112233"
+    padding="6"
+    borderRadius="4"
+    borderColor="#224466"
+    borderWidth="1"
+    textAlign="center"
+    cursor="pointer"
+  >Slow ($60)</text>
+
+  <text
+    name="btn-sniper"
+    fontSize="11"
+    color="#ffaa00"
+    backgroundColor="#112233"
+    padding="6"
+    borderRadius="4"
+    borderColor="#443300"
+    borderWidth="1"
+    textAlign="center"
+    cursor="pointer"
+  >Sniper ($120)</text>
+
+  <text
+    name="btn-chain"
+    fontSize="11"
+    color="#aa33ff"
+    backgroundColor="#112233"
+    padding="6"
+    borderRadius="4"
+    borderColor="#330066"
+    borderWidth="1"
+    textAlign="center"
+    cursor="pointer"
+  >Chain ($100)</text>
+
+  <container
+    marginTop="6"
+    flexDirection="column"
+    gap="2"
+  >
+    <text
+      fontSize="8"
+      color="#446688"
+      textAlign="center"
+    >1-5: Select tower</text>
+    <text
+      fontSize="8"
+      color="#446688"
+      textAlign="center"
+    >Click: Place tower</text>
+    <text
+      fontSize="8"
+      color="#446688"
+      textAlign="center"
+    >F: Speed | P: Pause</text>
+  </container>
+</container>

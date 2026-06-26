@@ -1,0 +1,97 @@
+<container
+  flexDirection="column"
+  alignItems="center"
+  gap="10"
+  width="420"
+  padding="20"
+  backgroundColor="#0a1520ee"
+  borderRadius="12"
+  borderColor="#00ccff"
+  borderWidth="1"
+>
+  <text
+    fontSize="22"
+    fontWeight="bold"
+    color="#00ffff"
+  >HOW TO PLAY</text>
+
+  <container
+    flexDirection="column"
+    gap="6"
+    width="360"
+    marginTop="8"
+  >
+    <text fontSize="12" color="#88ccee">
+      Defend the Citadel from waves of enemies!
+    </text>
+
+    <text fontSize="11" color="#66aacc" marginTop="4">
+      TOWERS:
+    </text>
+    <text fontSize="10" color="#00ffff">
+      Laser - Fast single-target ($50)
+    </text>
+    <text fontSize="10" color="#ff4488">
+      Pulse - Area damage ($80)
+    </text>
+    <text fontSize="10" color="#44aaff">
+      Slow - Slows enemies ($60)
+    </text>
+    <text fontSize="10" color="#ffaa00">
+      Sniper - High damage, slow ($120)
+    </text>
+    <text fontSize="10" color="#aa33ff">
+      Chain - Hits multiple targets ($100)
+    </text>
+
+    <text fontSize="11" color="#66aacc" marginTop="6">
+      CONTROLS:
+    </text>
+    <text fontSize="10" color="#88aacc">
+      Keys 1-5: Select tower type
+    </text>
+    <text fontSize="10" color="#88aacc">
+      Click: Place tower on grid
+    </text>
+    <text fontSize="10" color="#88aacc">
+      U: Upgrade selected tower
+    </text>
+    <text fontSize="10" color="#88aacc">
+      X: Sell selected tower
+    </text>
+    <text fontSize="10" color="#88aacc">
+      F: Toggle speed (1x/2x/3x)
+    </text>
+    <text fontSize="10" color="#88aacc">
+      P/Esc: Pause
+    </text>
+
+    <text fontSize="11" color="#66aacc" marginTop="6">
+      VR CONTROLS:
+    </text>
+    <text fontSize="10" color="#88aacc">
+      Trigger: Place tower
+    </text>
+    <text fontSize="10" color="#88aacc">
+      Thumbstick L/R: Cycle towers
+    </text>
+    <text fontSize="10" color="#88aacc">
+      A: Upgrade | B: Sell
+    </text>
+  </container>
+
+  <text
+    name="btn-back"
+    fontSize="14"
+    color="#00ffcc"
+    backgroundColor="#003344"
+    padding="8"
+    borderRadius="6"
+    borderColor="#00aa88"
+    borderWidth="1"
+    textAlign="center"
+    cursor="pointer"
+    marginTop="10"
+    width="160"
+  >BACK</text>
+</container>
