@@ -62,6 +62,12 @@
     <text name="ach-32" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Shield Breaker - Beat a shielded wave</text>
     <text name="ach-33" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Modifier Master - All 5 wave modifiers</text>
     <text name="ach-34" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Interest Earner - 100+ gold from interest</text>
+    <text name="ach-35" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Power Link - 3 adjacent same-type towers</text>
+    <text name="ach-36" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Critical Strike - Land a critical hit</text>
+    <text name="ach-37" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Inferno - Burn 20 enemies in one game</text>
+    <text name="ach-38" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Absolute Zero - Freeze 10 enemies</text>
+    <text name="ach-39" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Cartographer - Play all 3 maps</text>
+    <text name="ach-40" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Specialist - Win using only 1 tower type</text>
   </container>
 
   <text

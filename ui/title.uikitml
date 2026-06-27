@@ -2,9 +2,9 @@
   flexDirection="column"
   alignItems="center"
   justifyContent="center"
-  gap="12"
-  width="400"
-  padding="20"
+  gap="10"
+  width="420"
+  padding="18"
   backgroundColor="#0a1520ee"
   borderRadius="12"
   borderColor="#00ccff"
@@ -25,7 +25,7 @@
     name="stats-text"
     fontSize="11"
     color="#446688"
-    marginTop="8"
+    marginTop="4"
   >Best Wave: 0 | Kills: 0 | Wins: 0</text>
 
   <text
@@ -33,13 +33,13 @@
     fontSize="10"
     color="#ffcc00"
     marginTop="2"
-  >0/30 Achievements</text>
+  >0/42 Achievements</text>
 
   <container
     flexDirection="column"
     gap="4"
-    marginTop="8"
-    width="280"
+    marginTop="6"
+    width="340"
   >
     <text
       fontSize="11"
@@ -95,8 +95,72 @@
 
   <container
     flexDirection="column"
+    gap="4"
+    marginTop="4"
+    width="340"
+  >
+    <text
+      fontSize="11"
+      color="#66aacc"
+      textAlign="center"
+    >MAP</text>
+    <container
+      flexDirection="row"
+      gap="6"
+      justifyContent="center"
+    >
+      <text
+        name="btn-map-serpent"
+        fontSize="10"
+        color="#00ffcc"
+        backgroundColor="#002233"
+        padding="6"
+        borderRadius="4"
+        borderColor="#00aa88"
+        borderWidth="2"
+        textAlign="center"
+        cursor="pointer"
+        width="100"
+      >SERPENT</text>
+      <text
+        name="btn-map-crossroads"
+        fontSize="10"
+        color="#ffaa00"
+        backgroundColor="#221100"
+        padding="6"
+        borderRadius="4"
+        borderColor="#664400"
+        borderWidth="1"
+        textAlign="center"
+        cursor="pointer"
+        width="100"
+      >CROSSROADS</text>
+      <text
+        name="btn-map-gauntlet"
+        fontSize="10"
+        color="#ff4488"
+        backgroundColor="#220011"
+        padding="6"
+        borderRadius="4"
+        borderColor="#662244"
+        borderWidth="1"
+        textAlign="center"
+        cursor="pointer"
+        width="100"
+      >GAUNTLET</text>
+    </container>
+    <text
+      name="map-desc"
+      fontSize="9"
+      color="#446688"
+      textAlign="center"
+    >Classic zigzag</text>
+  </container>
+
+  <container
+    flexDirection="column"
     gap="8"
-    marginTop="8"
+    marginTop="6"
     width="280"
   >
     <text
@@ -111,7 +175,6 @@
       borderWidth="1"
       textAlign="center"
       cursor="pointer"
-      hover-backgroundColor="#004455"
     >START GAME</text>
 
     <text
@@ -125,7 +188,6 @@
       borderWidth="1"
       textAlign="center"
       cursor="pointer"
-      hover-backgroundColor="#223344"
     >HOW TO PLAY</text>
 
     <text
@@ -139,7 +201,6 @@
       borderWidth="1"
       textAlign="center"
       cursor="pointer"
-      hover-backgroundColor="#332200"
     >ACHIEVEMENTS</text>
 
     <text
@@ -153,7 +214,6 @@
       borderWidth="1"
       textAlign="center"
       cursor="pointer"
-      hover-backgroundColor="#223344"
     >STATISTICS</text>
   </container>
 </container>

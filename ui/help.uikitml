@@ -83,6 +83,15 @@
       NEW FEATURES:
     </text>
     <text fontSize="10" color="#00ff88">
+      3 Maps: Serpent, Crossroads, Gauntlet
+    </text>
+    <text fontSize="10" color="#ffcc00">
+      Tower Synergy: Adjacent same-type = +15% DMG
+    </text>
+    <text fontSize="10" color="#ff4488">
+      L3 Specials: Each tower unlocks a unique ability
+    </text>
+    <text fontSize="10" color="#00ffff">
       Endless Mode: Waves continue past 25!
     </text>
     <text fontSize="10" color="#ffcc00">
@@ -90,6 +99,25 @@
     </text>
     <text fontSize="10" color="#ff4488">
       Wave Modifiers: Armored, Haste, Regen, Swarm, Shield
+    </text>
+
+    <text fontSize="11" color="#66aacc" marginTop="6">
+      L3 TOWER ABILITIES:
+    </text>
+    <text fontSize="10" color="#00ffff">
+      Laser L3: Piercing - hits enemies in beam line
+    </text>
+    <text fontSize="10" color="#ff4488">
+      Pulse L3: Ignite - enemies burn for 2s
+    </text>
+    <text fontSize="10" color="#44aaff">
+      Slow L3: Freeze - 15% chance to stop enemy
+    </text>
+    <text fontSize="10" color="#ffaa00">
+      Sniper L3: Critical - 25% chance for 3x damage
+    </text>
+    <text fontSize="10" color="#aa33ff">
+      Chain L3: Shock - stun chained enemies
     </text>
   </container>
 

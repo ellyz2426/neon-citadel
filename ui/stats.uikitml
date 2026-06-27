@@ -47,6 +47,12 @@
 
     <text fontSize="12" fontWeight="bold" color="#66aacc" marginTop="6">WAVE MODIFIERS</text>
     <text name="stat-modifiers" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">None encountered</text>
+
+    <text fontSize="12" fontWeight="bold" color="#66aacc" marginTop="6">SPECIALS</text>
+    <text name="stat-synergy" fontSize="10" color="#00ff88" padding="3" backgroundColor="#112233" borderRadius="3">Max Synergy: 0</text>
+    <text name="stat-crits" fontSize="10" color="#ffaa00" padding="3" backgroundColor="#112233" borderRadius="3">Critical Hits: 0</text>
+    <text name="stat-burns" fontSize="10" color="#ff4444" padding="3" backgroundColor="#112233" borderRadius="3">Enemies Burned: 0</text>
+    <text name="stat-maps" fontSize="10" color="#88ccee" padding="3" backgroundColor="#112233" borderRadius="3">Maps Played: None</text>
   </container>
 
   <text

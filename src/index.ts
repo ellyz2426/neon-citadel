@@ -89,6 +89,9 @@ interface Enemy {
   shieldHp: number;
   maxShieldHp: number;
   shieldMesh: Mesh | null;
+  burnTimer: number;
+  burnDps: number;
+  freezeTimer: number;
 }
 
 interface Projectile {
@@ -164,6 +167,13 @@ const ACHIEVEMENT_DEFS: AchievementDef[] = [
   { id: 'shield-breaker', name: 'Shield Breaker', desc: 'Beat a shielded wave', check: g => g.modifiersEncountered.has('shield') && g.wave > 0 },
   { id: 'modifier-master', name: 'Modifier Master', desc: 'Encounter all 5 wave modifiers', check: g => g.modifiersEncountered.size >= 5 },
   { id: 'interest-earner', name: 'Interest Earner', desc: 'Earn 100+ gold from interest', check: g => g.totalInterestEarned >= 100 },
+  // Round 5: synergy, specials, map achievements
+  { id: 'synergy-start', name: 'Power Link', desc: 'Place 3 adjacent same-type towers', check: g => g.maxSynergyCount >= 3 },
+  { id: 'critical-strike', name: 'Critical Strike', desc: 'Land a critical hit (L3 Sniper)', check: g => g.criticalHits >= 1 },
+  { id: 'inferno', name: 'Inferno', desc: 'Burn 20 enemies in one game', check: g => g.enemiesBurned >= 20 },
+  { id: 'absolute-zero', name: 'Absolute Zero', desc: 'Freeze 10 enemies in one game', check: g => g.enemiesFrozen >= 10 },
+  { id: 'cartographer', name: 'Cartographer', desc: 'Play all 3 maps', check: g => g.mapsPlayed.size >= 3 },
+  { id: 'specialist', name: 'Specialist', desc: 'Win using only 1 tower type', check: g => g.wave >= TOTAL_WAVES && g.towerTypesUsed.size === 1 },
 ];
 
 // ============================================================
@@ -190,6 +200,55 @@ const PATH_COORDS: [number, number][] = [
   [6, 9], [7, 9], [8, 9], [9, 9],
   [9, 8], [9, 7], [9, 6], [9, 5], [9, 4], [9, 3],
   [10, 3], [11, 3],
+];
+
+// ============================================================
+// MAP SYSTEM
+// ============================================================
+type MapId = 'serpent' | 'crossroads' | 'gauntlet';
+interface MapDef {
+  id: MapId;
+  name: string;
+  desc: string;
+  path: [number, number][];
+}
+
+const MAP_DEFS: MapDef[] = [
+  {
+    id: 'serpent',
+    name: 'SERPENT',
+    desc: 'Classic zigzag',
+    path: PATH_COORDS,
+  },
+  {
+    id: 'crossroads',
+    name: 'CROSSROADS',
+    desc: 'Winding center path',
+    path: [
+      [0, 6], [1, 6], [2, 6],
+      [2, 7], [2, 8], [2, 9],
+      [3, 9], [4, 9], [5, 9],
+      [5, 8], [5, 7], [5, 6], [5, 5], [5, 4], [5, 3],
+      [6, 3], [7, 3], [8, 3],
+      [8, 4], [8, 5], [8, 6], [8, 7], [8, 8], [8, 9], [8, 10],
+      [9, 10], [10, 10], [11, 10],
+    ],
+  },
+  {
+    id: 'gauntlet',
+    name: 'GAUNTLET',
+    desc: 'Long winding descent',
+    path: [
+      [0, 1], [1, 1], [2, 1], [3, 1], [4, 1],
+      [4, 2], [4, 3], [4, 4], [4, 5],
+      [3, 5], [2, 5],
+      [2, 6], [2, 7], [2, 8], [2, 9],
+      [3, 9], [4, 9], [5, 9], [6, 9],
+      [6, 8], [6, 7], [6, 6],
+      [7, 6], [8, 6], [9, 6],
+      [9, 7], [9, 8], [9, 9], [9, 10], [9, 11],
+    ],
+  },
 ];
 
 const TOWER_DEFS: Record<TowerType, TowerDef> = {
@@ -302,6 +361,7 @@ interface Save {
   bestScore: number;
   towersBuilt: number;
   achievements: string[];
+  mapsPlayed: string[];
 }
 
 function loadSave(): Save {
@@ -310,10 +370,11 @@ function loadSave(): Save {
     if (d) {
       const parsed = JSON.parse(d);
       if (!parsed.achievements) parsed.achievements = [];
+      if (!parsed.mapsPlayed) parsed.mapsPlayed = [];
       return parsed;
     }
   } catch { /* ignore */ }
-  return { highWave: 0, totalKills: 0, totalGold: 0, gamesPlayed: 0, wins: 0, bestScore: 0, towersBuilt: 0, achievements: [] };
+  return { highWave: 0, totalKills: 0, totalGold: 0, gamesPlayed: 0, wins: 0, bestScore: 0, towersBuilt: 0, achievements: [], mapsPlayed: [] };
 }
 
 function writeSave(s: Save) {
@@ -348,6 +409,8 @@ class GameState {
   save: Save;
   selectedTower: Tower | null = null;
   difficulty: Difficulty = 'normal';
+  selectedMap: MapId = 'serpent';
+  currentPath: [number, number][] = PATH_COORDS;
 
   // Achievement tracking
   towersPlacedThisGame = 0;
@@ -388,8 +451,19 @@ class GameState {
   // Game timer
   gameTimeSeconds = 0;
 
+  // Synergy & specials tracking
+  maxSynergyCount = 0;
+  criticalHits = 0;
+  enemiesBurned = 0;
+  enemiesFrozen = 0;
+  mapsPlayed: Set<MapId> = new Set();
+  towerTypesUsed: Set<TowerType> = new Set();
+
   constructor() {
     this.save = loadSave();
+    this.currentPath = MAP_DEFS.find(m => m.id === this.selectedMap)!.path;
+    // Load maps played from save data
+    this.mapsPlayed = new Set(this.save.mapsPlayed as MapId[]);
     for (let r = 0; r < GRID_SIZE; r++) {
       this.grid[r] = [];
       this.isPath[r] = [];
@@ -398,7 +472,7 @@ class GameState {
         this.isPath[r][c] = false;
       }
     }
-    for (const [r, c] of PATH_COORDS) {
+    for (const [r, c] of this.currentPath) {
       if (r < GRID_SIZE && c < GRID_SIZE) this.isPath[r][c] = true;
     }
   }
@@ -434,6 +508,26 @@ class GameState {
     this.currentWaveModifier = 'none';
     this.modifiersEncountered = new Set();
     this.gameTimeSeconds = 0;
+    this.maxSynergyCount = 0;
+    this.criticalHits = 0;
+    this.enemiesBurned = 0;
+    this.enemiesFrozen = 0;
+    this.towerTypesUsed = new Set();
+  }
+
+  setMap(mapId: MapId): void {
+    this.selectedMap = mapId;
+    const mapDef = MAP_DEFS.find(m => m.id === mapId)!;
+    this.currentPath = mapDef.path;
+    // Recalculate isPath
+    for (let r = 0; r < GRID_SIZE; r++) {
+      for (let c = 0; c < GRID_SIZE; c++) {
+        this.isPath[r][c] = false;
+      }
+    }
+    for (const [r, c] of this.currentPath) {
+      if (r < GRID_SIZE && c < GRID_SIZE) this.isPath[r][c] = true;
+    }
   }
 }
 
@@ -543,7 +637,13 @@ class SceneBuilder {
   }
 
   buildPath(game: GameState): void {
-    for (const [r, c] of PATH_COORDS) {
+    // Clear existing path elements
+    while (this.pathGroup.children.length > 0) {
+      this.pathGroup.remove(this.pathGroup.children[0]);
+    }
+
+    const path = game.currentPath;
+    for (const [r, c] of path) {
       if (r >= GRID_SIZE || c >= GRID_SIZE) continue;
       const cell = new Mesh(
         new BoxGeometry(CELL_SIZE * 0.85, 0.003, CELL_SIZE * 0.85),
@@ -556,9 +656,9 @@ class SceneBuilder {
     }
 
     // Path direction arrows
-    for (let i = 0; i < PATH_COORDS.length - 1; i += 2) {
-      const [r1, c1] = PATH_COORDS[i];
-      const [r2, c2] = PATH_COORDS[Math.min(i + 1, PATH_COORDS.length - 1)];
+    for (let i = 0; i < path.length - 1; i += 2) {
+      const [r1, c1] = path[i];
+      const [r2, c2] = path[Math.min(i + 1, path.length - 1)];
       if (r1 >= GRID_SIZE || c1 >= GRID_SIZE) continue;
       const from = game.gridToWorld(r1, c1);
       const to = game.gridToWorld(r2, c2);
@@ -583,15 +683,19 @@ class SceneBuilder {
       new RingGeometry(CELL_SIZE * 0.3, CELL_SIZE * 0.45, 6),
       new MeshBasicMaterial({ color: 0xff4444, side: DoubleSide, transparent: true, opacity: 0.6 })
     );
-    const spawnPos = game.gridToWorld(PATH_COORDS[0][0], PATH_COORDS[0][1]);
+    const spawnPos = game.gridToWorld(path[0][0], path[0][1]);
     spawnMarker.position.set(spawnPos.x, BOARD_Y + 0.005, spawnPos.z);
     spawnMarker.rotation.x = -Math.PI / 2;
     this.pathGroup.add(spawnMarker);
   }
 
   buildCitadel(scene: Object3D, game: GameState): void {
+    // Remove existing citadel if rebuilding
+    if (this.citadelMesh) {
+      scene.remove(this.citadelMesh);
+    }
     this.citadelMesh = new Group();
-    const lastWP = PATH_COORDS[PATH_COORDS.length - 1];
+    const lastWP = game.currentPath[game.currentPath.length - 1];
     const cPos = game.gridToWorld(lastWP[0], lastWP[1]);
 
     const cBase = new Mesh(
@@ -803,6 +907,7 @@ class GameLogic {
   game: GameState;
   scene: SceneBuilder;
   raycaster = new Raycaster();
+  sceneRef: Object3D | null = null;
 
   constructor(game: GameState, scene: SceneBuilder) {
     this.game = game;
@@ -822,7 +927,19 @@ class GameLogic {
     this.game.gameSpeed = 1;
     this.game.selectedTower = null;
     this.game.resetGameTracking();
+
+    // Set up the selected map
+    this.game.setMap(this.game.selectedMap);
+    this.game.mapsPlayed.add(this.game.selectedMap);
+
     this.clearAll();
+
+    // Rebuild path and citadel for selected map
+    this.scene.buildPath(this.game);
+    if (this.sceneRef) {
+      this.scene.buildCitadel(this.sceneRef, this.game);
+    }
+
     this.startNextWave();
   }
 
@@ -1001,7 +1118,7 @@ class GameLogic {
     }
 
     const { group, healthBar, healthBg, shieldMesh } = this.scene.createEnemyMesh(type, hasShield);
-    const startPos = this.game.gridToWorld(PATH_COORDS[0][0], PATH_COORDS[0][1]);
+    const startPos = this.game.gridToWorld(this.game.currentPath[0][0], this.game.currentPath[0][1]);
     group.position.copy(startPos);
     this.scene.enemyGroup.add(group);
 
@@ -1018,32 +1135,48 @@ class GameLogic {
       regenRate: regenRate * endlessScale,
       shieldHp: shieldAmount, maxShieldHp: shieldAmount,
       shieldMesh,
+      burnTimer: 0, burnDps: 0, freezeTimer: 0,
     };
     this.game.enemies.push(enemy);
   }
 
   updateEnemies(delta: number): void {
     const toRemove: Enemy[] = [];
+    const path = this.game.currentPath;
     for (const enemy of this.game.enemies) {
       if (!enemy.alive) continue;
-      const speed = enemy.slowTimer > 0
-        ? enemy.speed * 0.4 * CELL_SIZE
-        : enemy.speed * CELL_SIZE;
-      enemy.slowTimer = Math.max(0, enemy.slowTimer - delta);
+
+      // Freeze: skip movement while frozen
+      if (enemy.freezeTimer > 0) {
+        enemy.freezeTimer -= delta;
+      } else {
+        const speed = enemy.slowTimer > 0
+          ? enemy.speed * 0.4 * CELL_SIZE
+          : enemy.speed * CELL_SIZE;
+        enemy.slowTimer = Math.max(0, enemy.slowTimer - delta);
+        enemy.pathProgress += speed * delta;
+      }
+
+      // Burn: take DoT
+      if (enemy.burnTimer > 0) {
+        enemy.burnTimer -= delta;
+        enemy.hp -= enemy.burnDps * delta;
+        if (enemy.burnTimer <= 0) {
+          enemy.burnDps = 0;
+        }
+      }
 
       // Regen modifier: heal over time
       if (enemy.regenRate > 0) {
         enemy.hp = Math.min(enemy.maxHp, enemy.hp + enemy.regenRate * delta);
       }
 
-      enemy.pathProgress += speed * delta;
-
-      while (enemy.pathProgress >= 1 && enemy.pathIdx < PATH_COORDS.length - 1) {
+      while (enemy.pathProgress >= 1 && enemy.pathIdx < path.length - 1) {
         enemy.pathProgress -= 1;
         enemy.pathIdx++;
       }
 
-      if (enemy.pathIdx >= PATH_COORDS.length - 1) {
+      if (enemy.pathIdx >= path.length - 1) {
         this.game.lives--;
         this.game.wavePerfect = false;
         this.game.waveLeaks++;
@@ -1053,8 +1186,25 @@ class GameLogic {
         continue;
       }
 
-      const curr = PATH_COORDS[enemy.pathIdx];
-      const next = PATH_COORDS[Math.min(enemy.pathIdx + 1, PATH_COORDS.length - 1)];
+      // Check burn death
+      if (enemy.hp <= 0) {
+        enemy.hp = 0;
+        enemy.alive = false;
+        this.game.totalKills++;
+        this.game.waveEnemiesRemaining--;
+        this.game.comboCount++;
+        this.game.comboTimer = 1.5;
+        if (this.game.comboCount > this.game.maxCombo) this.game.maxCombo = this.game.comboCount;
+        this.game.score += enemy.reward;
+        const enemyColor = new Color(ENEMY_DEFS[enemy.type].color);
+        const newParticles = this.scene.spawnDeathParticles(enemy.group.position.clone(), enemyColor, 8);
+        this.game.particles.push(...newParticles);
+        toRemove.push(enemy);
+        continue;
+      }
+
+      const curr = path[enemy.pathIdx];
+      const next = path[Math.min(enemy.pathIdx + 1, path.length - 1)];
       const currPos = this.game.gridToWorld(curr[0], curr[1]);
       const nextPos = this.game.gridToWorld(next[0], next[1]);
       enemy.group.position.lerpVectors(currPos, nextPos, Math.min(enemy.pathProgress, 1));
@@ -1122,6 +1272,9 @@ class GameLogic {
       const range = def.range * CELL_SIZE * (1 + (tower.level - 1) * 0.2);
       const tPos = this.game.gridToWorld(tower.gridR, tower.gridC);
 
+      // Tower synergy: adjacent same-type towers boost damage
+      const synergyBonus = this.getSynergyBonus(tower);
+
       // Target selection based on targeting mode
       let target: Enemy | null = null;
       const inRange: Enemy[] = [];
@@ -1162,7 +1315,11 @@ class GameLogic {
         tower.barrelMesh.position.clone().add(new Vector3(dir.x, 0, dir.z).normalize())
       );
 
-      const damage = def.damage * (1 + (tower.level - 1) * 0.4);
+      const baseDamage = def.damage * (1 + (tower.level - 1) * 0.4);
+      const damage = baseDamage * (1 + synergyBonus);
+
+      // Track tower type used
+      this.game.towerTypesUsed.add(tower.type);
 
       // Track DPS window
       tower.dpsWindow.push(performance.now() / 1000);
@@ -1174,6 +1331,12 @@ class GameLogic {
           if (dist <= range) {
             const dmg = damage * (1 - dist / range * 0.5);
             this.damageEnemy(enemy, dmg, tower);
+            // L3 Pulse: Ignite - enemies burn for 2s at 5 DPS
+            if (tower.level >= 3 && enemy.alive) {
+              enemy.burnTimer = 2.0;
+              enemy.burnDps = 5 * (1 + synergyBonus);
+              this.game.enemiesBurned++;
+            }
           }
         }
         this.createPulseEffect(tPos, range);
@@ -1185,19 +1348,29 @@ class GameLogic {
             enemy.slowTimer = 2.0;
             this.game.enemiesSlowed++;
             this.damageEnemy(enemy, damage, tower);
+            // L3 Slow: Freeze - 15% chance to stop enemy for 0.5s
+            if (tower.level >= 3 && Math.random() < 0.15) {
+              enemy.freezeTimer = 0.5;
+              this.game.enemiesFrozen++;
+            }
           }
         }
       } else if (tower.type === 'chain') {
         let chainTarget: Enemy | null = target;
         const hit = new Set<Enemy>();
-        for (let i = 0; i < 3 && chainTarget; i++) {
+        const chainCount = tower.level >= 3 ? 5 : 3; // L3: chain to 5 targets
+        for (let i = 0; i < chainCount && chainTarget; i++) {
           hit.add(chainTarget);
-          const dmg = damage * (1 - i * 0.2);
+          const dmg = damage * (1 - i * 0.15);
           this.damageEnemy(chainTarget, dmg, tower);
           this.fireProjectile(
             i === 0 ? tPos.clone().setY(BOARD_Y + 0.07) : chainTarget.group.position.clone(),
             chainTarget, tower.type, dmg
           );
+          // L3 Chain: Shock - chained enemies stunned for 0.3s
+          if (tower.level >= 3 && chainTarget.alive) {
+            chainTarget.freezeTimer = 0.3;
+          }
           let nextNearest: Enemy | null = null;
           let nextDist = Infinity;
           for (const e of this.game.enemies) {
@@ -1210,14 +1383,57 @@ class GameLogic {
           }
           chainTarget = nextNearest;
         }
-      } else {
-        // For laser and sniper: create a beam effect
-        this.fireProjectile(tPos.clone().setY(BOARD_Y + 0.07), target, tower.type, damage);
-        if (tower.type === 'laser') {
-          this.createBeamEffect(tPos.clone().setY(BOARD_Y + 0.07), target.group.position.clone(), new Color(def.color));
+      } else if (tower.type === 'sniper') {
+        // L3 Sniper: Critical - 25% chance for 3x damage
+        let finalDmg = damage;
+        if (tower.level >= 3 && Math.random() < 0.25) {
+          finalDmg = damage * 3;
+          this.game.criticalHits++;
+          // Spawn a bigger/brighter damage indicator for crit
+          const critIndicator = this.scene.spawnDamageNumber(
+            target.group.position.clone(), finalDmg, new Color('#ff0000')
+          );
+          this.game.damageNumbers.push(critIndicator);
         }
+        this.fireProjectile(tPos.clone().setY(BOARD_Y + 0.07), target, tower.type, finalDmg);
+      } else {
+        // Laser
+        let finalDmg = damage;
+        // L3 Laser: Piercing - beam hits all enemies in a line
+        if (tower.level >= 3) {
+          for (const enemy of inRange) {
+            if (enemy === target || !enemy.alive) continue;
+            // Check if enemy is roughly in the beam path
+            const toTarget = new Vector3().subVectors(target.group.position, tPos);
+            const toEnemy = new Vector3().subVectors(enemy.group.position, tPos);
+            const dot = toTarget.normalize().dot(toEnemy.normalize());
+            if (dot > 0.85) { // Within ~30 degree cone
+              this.damageEnemy(enemy, damage * 0.6, tower);
+            }
+          }
+        }
+        this.fireProjectile(tPos.clone().setY(BOARD_Y + 0.07), target, tower.type, finalDmg);
+        this.createBeamEffect(tPos.clone().setY(BOARD_Y + 0.07), target.group.position.clone(), new Color(def.color));
       }
     }
+  }
+
+  getSynergyBonus(tower: Tower): number {
+    let adjacentCount = 0;
+    const { gridR, gridC } = tower;
+    const dirs: [number, number][] = [[-1, 0], [1, 0], [0, -1], [0, 1]];
+    for (const [dr, dc] of dirs) {
+      const nr = gridR + dr;
+      const nc = gridC + dc;
+      if (nr >= 0 && nr < GRID_SIZE && nc >= 0 && nc < GRID_SIZE) {
+        const neighbor = this.game.grid[nr][nc];
+        if (neighbor && neighbor.type === tower.type) adjacentCount++;
+      }
+    }
+    if (adjacentCount > this.game.maxSynergyCount) {
+      this.game.maxSynergyCount = adjacentCount;
+    }
+    return adjacentCount * 0.15; // 15% per adjacent same-type tower
   }
 
   fireProjectile(origin: Vector3, target: Enemy, type: TowerType, damage: number): void {
@@ -1460,6 +1676,12 @@ class GameLogic {
     if (this.game.wave > this.game.save.highWave) this.game.save.highWave = this.game.wave;
     if (this.game.score > this.game.save.bestScore) this.game.save.bestScore = this.game.score;
     if (won) this.game.save.wins++;
+    // Persist maps played across sessions
+    for (const m of this.game.mapsPlayed) {
+      if (!this.game.save.mapsPlayed.includes(m)) {
+        this.game.save.mapsPlayed.push(m);
+      }
+    }
     this.checkAchievements();
     writeSave(this.game.save);
   }
@@ -1626,6 +1848,17 @@ class UIManager {
     }
     this.updateDifficultyButtons();
 
+    // Map buttons
+    const mapIds: MapId[] = ['serpent', 'crossroads', 'gauntlet'];
+    for (const mapId of mapIds) {
+      const btn = doc.getElementById(`btn-map-${mapId}`) as UIKit.Text | undefined;
+      btn?.addEventListener('click', () => {
+        this.game.selectedMap = mapId;
+        this.updateMapButtons();
+      });
+    }
+    this.updateMapButtons();
+
     const statsText = doc.getElementById('stats-text') as UIKit.Text | undefined;
     const s = this.game.save;
     statsText?.setProperties({
@@ -1654,6 +1887,28 @@ class UIManager {
         backgroundColor: isActive ? d.activeColor : '#112233',
       });
     }
+  }
+
+  updateMapButtons(): void {
+    if (!this.titleDoc) return;
+    const maps: { id: MapId; color: string; borderColor: string; activeColor: string; activeBorder: string; desc: string }[] = [
+      { id: 'serpent', color: '#00ffcc', borderColor: '#005544', activeColor: '#002233', activeBorder: '#00ffcc', desc: 'Classic zigzag' },
+      { id: 'crossroads', color: '#ffaa00', borderColor: '#664400', activeColor: '#221100', activeBorder: '#ffaa00', desc: 'Winding center path' },
+      { id: 'gauntlet', color: '#ff4488', borderColor: '#662244', activeColor: '#220011', activeBorder: '#ff4488', desc: 'Long winding descent' },
+    ];
+    for (const m of maps) {
+      const btn = this.titleDoc.getElementById(`btn-map-${m.id}`) as UIKit.Text | undefined;
+      const isActive = this.game.selectedMap === m.id;
+      btn?.setProperties({
+        borderWidth: isActive ? 2 : 1,
+        borderColor: isActive ? m.activeBorder : m.borderColor,
+        backgroundColor: isActive ? m.activeColor : '#112233',
+      });
+    }
+    // Update map description
+    const descEl = this.titleDoc.getElementById('map-desc') as UIKit.Text | undefined;
+    const currentMap = maps.find(m => m.id === this.game.selectedMap);
+    descEl?.setProperties({ text: currentMap?.desc || '' });
   }
 
   bindHud(doc: UIKitDocument, entity: any): void {
@@ -1863,21 +2118,38 @@ class UIManager {
     const upgradeCost = tower.level < 3 ? Math.floor(def.cost * UPGRADE_COST_MULT * tower.level) : 0;
     const sellValue = Math.floor(def.cost * 0.6 * tower.level);
 
+    // Calculate synergy bonus
+    const synergyBonus = this.logic.getSynergyBonus(tower);
+    const synergyPct = Math.round(synergyBonus * 100);
+
     const setText = (id: string, text: string) => {
       const el = this.towerInfoDoc!.getElementById(id) as UIKit.Text | undefined;
       el?.setProperties({ text });
     };
 
     setText('tower-name', `${def.name} Tower`);
-    setText('tower-type', `Type: ${def.desc}`);
+
+    // Show L3 special ability
+    const l3Specials: Record<TowerType, string> = {
+      laser: 'L3: Piercing Beam',
+      pulse: 'L3: Ignite (burn)',
+      slow: 'L3: Freeze (15%)',
+      sniper: 'L3: Critical (25% 3x)',
+      chain: 'L3: Shock Stun',
+    };
+    const typeDesc = tower.level >= 3 ? l3Specials[tower.type] : def.desc;
+    setText('tower-type', `Type: ${typeDesc}`);
     setText('tower-level', `Level: ${tower.level}/3`);
-    setText('tower-damage', `Damage: ${damage.toFixed(1)}`);
+    const dmgText = synergyPct > 0
+      ? `Damage: ${damage.toFixed(1)} (+${synergyPct}% synergy)`
+      : `Damage: ${damage.toFixed(1)}`;
+    setText('tower-damage', dmgText);
     setText('tower-range', `Range: ${range.toFixed(1)}`);
     setText('tower-fire-rate', `Fire Rate: ${fireRate.toFixed(1)}/s`);
     setText('tower-kills', `Kills: ${tower.kills} | DMG: ${Math.floor(tower.totalDamageDealt)}`);
 
-    // DPS display
-    const theoreticalDps = damage * fireRate;
+    // DPS display (with synergy)
+    const theoreticalDps = damage * fireRate * (1 + synergyBonus);
     setText('tower-dps', `DPS: ${theoreticalDps.toFixed(1)} (${tower.dps > 0 ? tower.dps.toFixed(1) : '0'} actual)`);
 
     // Target mode button
@@ -1906,6 +2178,7 @@ class UIManager {
     if (!this.gameoverDoc) return;
     const won = this.game.wave >= TOTAL_WAVES;
     const endlessLabel = this.game.endlessMode ? ` (Endless Wave ${this.game.wave})` : '';
+    const mapName = MAP_DEFS.find(m => m.id === this.game.selectedMap)?.name || '';
     const setText = (id: string, text: string) => {
       const el = this.gameoverDoc!.getElementById(id) as UIKit.Text | undefined;
       el?.setProperties({ text });
@@ -1915,7 +2188,7 @@ class UIManager {
       ? `Score: ${this.game.score} (${this.game.difficulty.toUpperCase()} ENDLESS)`
       : `Score: ${this.game.score} (${this.game.difficulty.toUpperCase()})`;
     setText('final-score', scoreLabel);
-    setText('final-wave', `Wave: ${this.game.wave}/${this.game.endlessMode ? '∞' : TOTAL_WAVES}${endlessLabel}`);
+    setText('final-wave', `Wave: ${this.game.wave}/${this.game.endlessMode ? '...' : TOTAL_WAVES}${endlessLabel} | Map: ${mapName}`);
     setText('final-kills', `Kills: ${this.game.totalKills} | Max Combo: ${this.game.maxCombo}x`);
     setText('final-ach', `New Achievements: ${this.game.pendingAchievements.length > 0 ? this.game.pendingAchievements.join(', ') : 'None'}`);
   }
@@ -2026,6 +2299,12 @@ class UIManager {
     setText('stat-modifiers', modsEncountered.length > 0
       ? `Encountered: ${modsEncountered.join(', ')}`
       : 'None encountered');
+
+    // Synergy and specials
+    setText('stat-synergy', `Max Synergy: ${g.maxSynergyCount} adjacent`);
+    setText('stat-crits', `Critical Hits: ${g.criticalHits} | Frozen: ${g.enemiesFrozen}`);
+    setText('stat-burns', `Enemies Burned: ${g.enemiesBurned}`);
+    setText('stat-maps', `Maps Played: ${Array.from(g.mapsPlayed).join(', ') || 'None'}`);
   }
 
   updateVisibility(): void {
@@ -2283,6 +2562,7 @@ async function main() {
   const ui = new UIManager(game, logic);
 
   sceneBuilder.build(world.scene, game);
+  logic.sceneRef = world.scene;
 
   // Panel configs: config path, position, name
   const panelConfigs = [
