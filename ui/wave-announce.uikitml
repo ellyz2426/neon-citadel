@@ -28,4 +28,10 @@
     fontSize="10"
     color="#ffaa00"
   >4 Grunts</text>
+
+  <text
+    name="wave-reward"
+    fontSize="9"
+    color="#00ff88"
+  ></text>
 </container>

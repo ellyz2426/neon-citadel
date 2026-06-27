@@ -2,7 +2,7 @@
   flexDirection="column"
   alignItems="center"
   gap="4"
-  width="620"
+  width="650"
   padding="8"
   backgroundColor="#0a1520cc"
   borderRadius="8"
@@ -13,8 +13,8 @@
     flexDirection="row"
     alignItems="center"
     justifyContent="space-between"
-    gap="12"
-    width="600"
+    gap="10"
+    width="630"
   >
     <text
       name="gold-text"
@@ -60,6 +60,19 @@
     >1x</text>
 
     <text
+      name="btn-auto"
+      fontSize="10"
+      fontWeight="bold"
+      color="#446688"
+      backgroundColor="#111a22"
+      padding="3"
+      borderRadius="3"
+      borderColor="#334455"
+      borderWidth="1"
+      cursor="pointer"
+    >AUTO: OFF</text>
+
+    <text
       name="diff-text"
       fontSize="10"
       color="#88aacc"
@@ -73,13 +86,20 @@
     flexDirection="row"
     alignItems="center"
     justifyContent="space-between"
-    width="600"
+    width="630"
   >
     <text
       name="selected-text"
       fontSize="10"
       color="#44aaff"
     >[Laser] $50 | DMG:10 | RNG:2.5</text>
+
+    <text
+      name="perfect-text"
+      fontSize="10"
+      fontWeight="bold"
+      color="#00ff88"
+    ></text>
 
     <text
       name="combo-text"

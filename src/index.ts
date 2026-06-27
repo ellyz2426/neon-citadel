@@ -174,6 +174,13 @@ const ACHIEVEMENT_DEFS: AchievementDef[] = [
   { id: 'absolute-zero', name: 'Absolute Zero', desc: 'Freeze 10 enemies in one game', check: g => g.enemiesFrozen >= 10 },
   { id: 'cartographer', name: 'Cartographer', desc: 'Play all 3 maps', check: g => g.mapsPlayed.size >= 3 },
   { id: 'specialist', name: 'Specialist', desc: 'Win using only 1 tower type', check: g => g.wave >= TOTAL_WAVES && g.towerTypesUsed.size === 1 },
+  // Round 6: perfect waves, economy, speed, environment mastery
+  { id: 'perfect-defender', name: 'Perfect Defender', desc: 'Complete 5 waves with zero leaks', check: g => g.perfectWaveStreak >= 5 },
+  { id: 'flawless-victory', name: 'Flawless Victory', desc: 'Beat all 25 waves with no leaks', check: g => g.wave >= TOTAL_WAVES && g.totalLeaks === 0 },
+  { id: 'speed-runner', name: 'Speed Runner', desc: 'Beat wave 15 in under 5 minutes', check: g => g.wave >= 15 && g.gameTimeSeconds <= 300 },
+  { id: 'economy-master', name: 'Economy Master', desc: 'Reach 500+ gold banked', check: g => g.gold >= 500 },
+  { id: 'auto-pilot', name: 'Auto Pilot', desc: 'Win with auto-wave enabled', check: g => g.wave >= TOTAL_WAVES && g.autoWave },
+  { id: 'zoom-master', name: 'Eagle Eye', desc: 'Use camera zoom during gameplay', check: g => g.hasZoomed },
 ];
 
 // ============================================================
@@ -459,6 +466,13 @@ class GameState {
   mapsPlayed: Set<MapId> = new Set();
   towerTypesUsed: Set<TowerType> = new Set();
 
+  // Round 6: environment + quality-of-life tracking
+  autoWave = false;
+  perfectWaveStreak = 0;
+  totalLeaks = 0;
+  hasZoomed = false;
+  cameraZoom = 1.0;
+
   constructor() {
     this.save = loadSave();
     this.currentPath = MAP_DEFS.find(m => m.id === this.selectedMap)!.path;
@@ -513,6 +527,10 @@ class GameState {
     this.enemiesBurned = 0;
     this.enemiesFrozen = 0;
     this.towerTypesUsed = new Set();
+    this.perfectWaveStreak = 0;
+    this.totalLeaks = 0;
+    this.hasZoomed = false;
+    // Note: autoWave persists across games (player preference)
   }
 
   setMap(mapId: MapId): void {
@@ -541,9 +559,11 @@ class SceneBuilder {
   enemyGroup = new Group();
   projectileGroup = new Group();
   effectsGroup = new Group();
+  envParticlesGroup = new Group();
   hoverIndicator!: Mesh;
   hoverRangeRing!: Mesh;
   citadelMesh!: Group;
+  envParticles: Array<{ mesh: Mesh; baseY: number; angle: number; radius: number; speed: number; floatSpeed: number }> = [];
 
   build(scene: Object3D, game: GameState): void {
     const s = scene as any;
@@ -568,6 +588,9 @@ class SceneBuilder {
     scene.add(this.pathGroup);
     this.buildCitadel(scene, game);
 
+    // Environment particles
+    this.buildEnvParticles(scene);
+
     // Hover indicator
     this.hoverIndicator = new Mesh(
       new BoxGeometry(CELL_SIZE * 0.9, 0.002, CELL_SIZE * 0.9),
@@ -584,6 +607,47 @@ class SceneBuilder {
     this.hoverRangeRing.rotation.x = -Math.PI / 2;
     this.hoverRangeRing.visible = false;
     scene.add(this.hoverRangeRing);
+  }
+
+  buildEnvParticles(scene: Object3D): void {
+    scene.add(this.envParticlesGroup);
+    const particleColors = [0x00ccff, 0x00ffaa, 0x4488ff, 0x8844ff, 0x00ffff];
+    for (let i = 0; i < 40; i++) {
+      const size = 0.002 + Math.random() * 0.003;
+      const color = particleColors[Math.floor(Math.random() * particleColors.length)];
+      const mesh = new Mesh(
+        new SphereGeometry(size, 4, 4),
+        new MeshBasicMaterial({ color, transparent: true, opacity: 0.15 + Math.random() * 0.25 })
+      );
+      const radius = 0.3 + Math.random() * 1.5;
+      const angle = Math.random() * Math.PI * 2;
+      const baseY = BOARD_Y + 0.05 + Math.random() * 0.6;
+      mesh.position.set(
+        Math.cos(angle) * radius,
+        baseY,
+        Math.sin(angle) * radius
+      );
+      this.envParticlesGroup.add(mesh);
+      this.envParticles.push({
+        mesh,
+        baseY,
+        angle,
+        radius,
+        speed: 0.1 + Math.random() * 0.3,
+        floatSpeed: 0.3 + Math.random() * 0.6,
+      });
+    }
+  }
+
+  updateEnvParticles(time: number): void {
+    for (const p of this.envParticles) {
+      const a = p.angle + time * p.speed;
+      p.mesh.position.x = Math.cos(a) * p.radius;
+      p.mesh.position.z = Math.sin(a) * p.radius;
+      p.mesh.position.y = p.baseY + Math.sin(time * p.floatSpeed + p.angle) * 0.03;
+      // Gentle pulsing opacity
+      (p.mesh.material as MeshBasicMaterial).opacity = 0.15 + Math.sin(time * p.floatSpeed * 2 + p.angle) * 0.1;
+    }
   }
 
   buildGrid(scene: Object3D): void {
@@ -1180,6 +1244,7 @@ class GameLogic {
         this.game.lives--;
         this.game.wavePerfect = false;
         this.game.waveLeaks++;
+        this.game.totalLeaks++;
         enemy.alive = false;
         toRemove.push(enemy);
         this.game.waveEnemiesRemaining--;
@@ -1266,8 +1331,6 @@ class GameLogic {
         tower.lastDpsUpdate = now;
       }
 
-      if (tower.cooldown > 0) continue;
-
       const def = TOWER_DEFS[tower.type];
       const range = def.range * CELL_SIZE * (1 + (tower.level - 1) * 0.2);
       const tPos = this.game.gridToWorld(tower.gridR, tower.gridC);
@@ -1304,16 +1367,26 @@ class GameLogic {
             break;
         }
       }
-      if (!target) continue;
+
+      // Smooth barrel tracking toward target (or idle rotation)
+      if (target) {
+        const dir = new Vector3().subVectors(target.group.position, tower.group.position);
+        const targetAngle = Math.atan2(dir.x, dir.z);
+        const currentAngle = tower.barrelMesh.rotation.y || 0;
+        let angleDiff = targetAngle - currentAngle;
+        // Normalize to [-PI, PI]
+        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+        tower.barrelMesh.rotation.y = currentAngle + angleDiff * Math.min(1, delta * 8);
+      } else {
+        // Idle: slow rotation
+        tower.barrelMesh.rotation.y += delta * 0.3;
+      }
+
+      if (!target || tower.cooldown > 0) continue;
 
       tower.cooldown = 1 / (def.fireRate * (1 + (tower.level - 1) * 0.15));
       tower.targetEntity = target;
-
-      // Aim barrel at target
-      const dir = new Vector3().subVectors(target.group.position, tower.group.position);
-      tower.barrelMesh.lookAt(
-        tower.barrelMesh.position.clone().add(new Vector3(dir.x, 0, dir.z).normalize())
-      );
 
       const baseDamage = def.damage * (1 + (tower.level - 1) * 0.4);
       const damage = baseDamage * (1 + synergyBonus);
@@ -1636,9 +1709,21 @@ class GameLogic {
     if (this.game.spawnQueue.length === 0 && this.game.enemies.length === 0) {
       this.game.waveActive = false;
       this.game.wave++;
-      this.game.gold += 20 + this.game.wave * 5;
-      this.game.totalGoldEarned += 20 + this.game.wave * 5;
+      const baseWaveGold = 20 + this.game.wave * 5;
+      this.game.gold += baseWaveGold;
+      this.game.totalGoldEarned += baseWaveGold;
       this.game.score += 100 * this.game.wave;
+
+      // Perfect wave bonus: +50% gold, +200 score
+      if (this.game.wavePerfect) {
+        this.game.perfectWaveStreak++;
+        const perfectBonus = Math.floor(baseWaveGold * 0.5) + this.game.perfectWaveStreak * 5;
+        this.game.gold += perfectBonus;
+        this.game.totalGoldEarned += perfectBonus;
+        this.game.score += 200;
+      } else {
+        this.game.perfectWaveStreak = 0;
+      }
 
       // Extra score bonus for endless waves
       if (this.game.endlessMode) {
@@ -1649,11 +1734,11 @@ class GameLogic {
       // Check achievements after wave
       this.checkAchievements();
 
-      // In endless mode, waves keep coming. Regular mode ends at TOTAL_WAVES.
-      // Player can still lose by running out of lives.
+      // Auto-wave or delayed start
+      const delay = this.game.autoWave ? 500 : 2000;
       setTimeout(() => {
         if (this.game.screen === 'playing') this.startNextWave();
-      }, 2000);
+      }, delay);
     }
   }
 
@@ -1914,6 +1999,34 @@ class UIManager {
   bindHud(doc: UIKitDocument, entity: any): void {
     this.hudDoc = doc;
     this.hudEntity = entity;
+
+    // Auto-wave toggle button
+    const btnAuto = doc.getElementById('btn-auto') as UIKit.Text | undefined;
+    btnAuto?.addEventListener('click', () => {
+      this.game.autoWave = !this.game.autoWave;
+      this.updateAutoWaveButton();
+    });
+    this.updateAutoWaveButton();
+  }
+
+  updateAutoWaveButton(): void {
+    if (!this.hudDoc) return;
+    const btnAuto = this.hudDoc.getElementById('btn-auto') as UIKit.Text | undefined;
+    if (this.game.autoWave) {
+      btnAuto?.setProperties({
+        text: 'AUTO: ON',
+        color: '#00ff88',
+        backgroundColor: '#003322',
+        borderColor: '#00ff88',
+      });
+    } else {
+      btnAuto?.setProperties({
+        text: 'AUTO: OFF',
+        color: '#446688',
+        backgroundColor: '#111a22',
+        borderColor: '#334455',
+      });
+    }
   }
 
   bindTowerSelect(doc: UIKitDocument, entity: any): void {
@@ -2064,6 +2177,13 @@ class UIManager {
       : this.game.difficulty.toUpperCase();
     setText('diff-text', diffLabel);
 
+    // Perfect wave streak display
+    if (this.game.perfectWaveStreak > 0) {
+      setText('perfect-text', `Perfect x${this.game.perfectWaveStreak}!`);
+    } else {
+      setText('perfect-text', '');
+    }
+
     const selected = this.game.selectedTowerType;
     const def = TOWER_DEFS[selected];
     setText('selected-text', `[${def.name}] $${def.cost} | DMG:${def.damage} | RNG:${def.range}`);
@@ -2190,7 +2310,8 @@ class UIManager {
     setText('final-score', scoreLabel);
     setText('final-wave', `Wave: ${this.game.wave}/${this.game.endlessMode ? '...' : TOTAL_WAVES}${endlessLabel} | Map: ${mapName}`);
     setText('final-kills', `Kills: ${this.game.totalKills} | Max Combo: ${this.game.maxCombo}x`);
-    setText('final-ach', `New Achievements: ${this.game.pendingAchievements.length > 0 ? this.game.pendingAchievements.join(', ') : 'None'}`);
+    const leakText = this.game.totalLeaks === 0 ? 'FLAWLESS!' : `Leaks: ${this.game.totalLeaks}`;
+    setText('final-ach', `${leakText} | New Achievements: ${this.game.pendingAchievements.length > 0 ? this.game.pendingAchievements.join(', ') : 'None'}`);
   }
 
   updateAchievements(): void {
@@ -2259,6 +2380,10 @@ class UIManager {
     } else {
       setText('wave-desc', 'Incoming enemies!');
     }
+
+    // Show wave completion reward preview
+    const nextWaveGold = 20 + (waveNum + 1) * 5;
+    setText('wave-reward', `Reward: ${nextWaveGold}g (+50% if perfect)`);
   }
 
   updateStats(): void {
@@ -2305,6 +2430,12 @@ class UIManager {
     setText('stat-crits', `Critical Hits: ${g.criticalHits} | Frozen: ${g.enemiesFrozen}`);
     setText('stat-burns', `Enemies Burned: ${g.enemiesBurned}`);
     setText('stat-maps', `Maps Played: ${Array.from(g.mapsPlayed).join(', ') || 'None'}`);
+
+    // New round 6 stats
+    const perfectLabel = g.perfectWaveStreak > 0
+      ? `Perfect Streak: ${g.perfectWaveStreak} | Total Leaks: ${g.totalLeaks}`
+      : `Total Leaks: ${g.totalLeaks}`;
+    setText('stat-perfect', perfectLabel);
   }
 
   updateVisibility(): void {
@@ -2442,6 +2573,9 @@ class GameSystem extends createSystem({
       });
     }
 
+    // Animate environment particles
+    this.logic.scene.updateEnvParticles(time);
+
     // Hover indicator pulse
     if (this.logic.scene.hoverIndicator.visible) {
       const mat = this.logic.scene.hoverIndicator.material as MeshBasicMaterial;
@@ -2475,6 +2609,12 @@ class GameSystem extends createSystem({
 
     if (kb.getKeyDown('KeyF')) {
       this.game.gameSpeed = this.game.gameSpeed >= 3 ? 1 : this.game.gameSpeed + 1;
+    }
+
+    // Toggle auto-wave
+    if (kb.getKeyDown('KeyA') && this.game.screen === 'playing') {
+      this.game.autoWave = !this.game.autoWave;
+      this.ui.updateAutoWaveButton();
     }
 
     if (kb.getKeyDown('KeyX') && this.game.selectedTower) {
@@ -2657,6 +2797,25 @@ async function main() {
       sceneBuilder.hoverRangeRing.visible = false;
     }
   });
+
+  // Camera zoom with scroll wheel
+  const initialCamPos = world.camera.position.clone();
+  const initialLookAt = new Vector3(0, 0.85, 0);
+
+  canvas.addEventListener('wheel', (e: WheelEvent) => {
+    e.preventDefault();
+    const zoomSpeed = 0.1;
+    const delta = e.deltaY > 0 ? zoomSpeed : -zoomSpeed;
+    game.cameraZoom = Math.max(0.5, Math.min(2.0, game.cameraZoom + delta));
+    game.hasZoomed = true;
+
+    // Interpolate camera position between close and far
+    const dir = new Vector3().subVectors(initialCamPos, initialLookAt).normalize();
+    const dist = initialCamPos.distanceTo(initialLookAt) * game.cameraZoom;
+    const newPos = initialLookAt.clone().add(dir.multiplyScalar(dist));
+    world.camera.position.copy(newPos);
+    world.camera.lookAt(initialLookAt);
+  }, { passive: false });
 }
 
 main().catch(console.error);

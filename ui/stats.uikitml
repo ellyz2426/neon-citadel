@@ -37,6 +37,7 @@
     <text name="stat-combo" fontSize="10" color="#ff8800" padding="3" backgroundColor="#112233" borderRadius="3">Max Combo: 0x</text>
     <text name="stat-towers-built" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">Towers Built: 0</text>
     <text name="stat-towers-sold" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">Towers Sold: 0</text>
+    <text name="stat-perfect" fontSize="10" color="#00ff88" padding="3" backgroundColor="#112233" borderRadius="3">Total Leaks: 0</text>
 
     <text fontSize="12" fontWeight="bold" color="#66aacc" marginTop="6">TOWER KILLS</text>
     <text name="stat-laser-kills" fontSize="10" color="#00ffff" padding="3" backgroundColor="#112233" borderRadius="3">Laser: 0</text>
