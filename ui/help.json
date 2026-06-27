@@ -1,0 +1,842 @@
+{
+  "element": {
+    "sourceTag": "container",
+    "type": "custom",
+    "children": [
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "HOW TO PLAY"
+        ],
+        "properties": {
+          "fontsize": "22",
+          "fontweight": "bold",
+          "color": "#00ffff"
+        },
+        "dataUid": "uid-2"
+      },
+      {
+        "sourceTag": "container",
+        "type": "custom",
+        "children": [
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Defend the Citadel from waves of enemies!"
+            ],
+            "properties": {
+              "fontsize": "12",
+              "color": "#88ccee"
+            },
+            "dataUid": "uid-4"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "TOWERS:"
+            ],
+            "properties": {
+              "fontsize": "11",
+              "color": "#66aacc",
+              "margintop": "4"
+            },
+            "dataUid": "uid-5"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Laser - Fast single-target ($50)"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#00ffff"
+            },
+            "dataUid": "uid-6"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Pulse - Area damage ($80)"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#ff4488"
+            },
+            "dataUid": "uid-7"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Slow - Slows enemies ($60)"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#44aaff"
+            },
+            "dataUid": "uid-8"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Sniper - High damage, slow ($120)"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#ffaa00"
+            },
+            "dataUid": "uid-9"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Chain - Hits multiple targets ($100)"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#aa33ff"
+            },
+            "dataUid": "uid-10"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "KEYBOARD SHORTCUTS:"
+            ],
+            "properties": {
+              "fontsize": "11",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-11"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "1-5: Select tower type"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-12"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Click: Place tower / Select tower"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-13"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "U: Upgrade selected tower"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-14"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "X: Sell selected tower"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-15"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Tab: Deselect tower"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-16"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "F: Toggle speed (1x/2x/3x)"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-17"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "A: Toggle auto-wave"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-18"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Scroll: Zoom in/out"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-19"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "P/Esc: Pause"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-20"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "VR CONTROLS:"
+            ],
+            "properties": {
+              "fontsize": "11",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-21"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Trigger: Place tower / Select"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-22"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Thumbstick L/R: Cycle towers"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-23"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "A: Upgrade | B: Sell"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-24"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "GAME MECHANICS:"
+            ],
+            "properties": {
+              "fontsize": "11",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-25"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Perfect Wave: +50% gold bonus (no leaks)"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#00ff88"
+            },
+            "dataUid": "uid-26"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Tower Synergy: Adjacent same-type = +15% DMG"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#ffcc00"
+            },
+            "dataUid": "uid-27"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Gold Interest: Earn 10% of gold each wave"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#00ffff"
+            },
+            "dataUid": "uid-28"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Wave Modifiers: Armored, Haste, Regen, Swarm, Shield"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#ff4488"
+            },
+            "dataUid": "uid-29"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Endless Mode: Waves continue past 25!"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#00ffff"
+            },
+            "dataUid": "uid-30"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "L3 TOWER ABILITIES:"
+            ],
+            "properties": {
+              "fontsize": "11",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-31"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Laser: Piercing - hits enemies in beam line"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#00ffff"
+            },
+            "dataUid": "uid-32"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Pulse: Ignite - enemies burn for 2s"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#ff4488"
+            },
+            "dataUid": "uid-33"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Slow: Freeze - 15% chance to stop enemy"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#44aaff"
+            },
+            "dataUid": "uid-34"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Sniper: Critical - 25% chance for 3x damage"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#ffaa00"
+            },
+            "dataUid": "uid-35"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Chain: Shock - stun chained enemies"
+            ],
+            "properties": {
+              "fontsize": "10",
+              "color": "#aa33ff"
+            },
+            "dataUid": "uid-36"
+          }
+        ],
+        "properties": {
+          "flexdirection": "column",
+          "gap": "6",
+          "width": "360",
+          "margintop": "8"
+        },
+        "dataUid": "uid-3"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "BACK"
+        ],
+        "properties": {
+          "name": "btn-back",
+          "fontsize": "14",
+          "color": "#00ffcc",
+          "backgroundcolor": "#003344",
+          "padding": "8",
+          "borderradius": "6",
+          "bordercolor": "#00aa88",
+          "borderwidth": "1",
+          "textalign": "center",
+          "cursor": "pointer",
+          "margintop": "10",
+          "width": "160"
+        },
+        "dataUid": "uid-37"
+      }
+    ],
+    "properties": {
+      "flexdirection": "column",
+      "alignitems": "center",
+      "gap": "10",
+      "width": "420",
+      "padding": "20",
+      "backgroundcolor": "#0a1520ee",
+      "borderradius": "12",
+      "bordercolor": "#00ccff",
+      "borderwidth": "1"
+    },
+    "dataUid": "uid-1"
+  },
+  "classes": {},
+  "ranges": {
+    "uid-1": {
+      "start": {
+        "line": 0,
+        "column": 0
+      },
+      "end": {
+        "line": 143,
+        "column": 12
+      }
+    },
+    "uid-2": {
+      "start": {
+        "line": 11,
+        "column": 2
+      },
+      "end": {
+        "line": 15,
+        "column": 21
+      }
+    },
+    "uid-3": {
+      "start": {
+        "line": 17,
+        "column": 2
+      },
+      "end": {
+        "line": 127,
+        "column": 14
+      }
+    },
+    "uid-4": {
+      "start": {
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "line": 25,
+        "column": 11
+      }
+    },
+    "uid-5": {
+      "start": {
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "line": 29,
+        "column": 11
+      }
+    },
+    "uid-6": {
+      "start": {
+        "line": 30,
+        "column": 4
+      },
+      "end": {
+        "line": 32,
+        "column": 11
+      }
+    },
+    "uid-7": {
+      "start": {
+        "line": 33,
+        "column": 4
+      },
+      "end": {
+        "line": 35,
+        "column": 11
+      }
+    },
+    "uid-8": {
+      "start": {
+        "line": 36,
+        "column": 4
+      },
+      "end": {
+        "line": 38,
+        "column": 11
+      }
+    },
+    "uid-9": {
+      "start": {
+        "line": 39,
+        "column": 4
+      },
+      "end": {
+        "line": 41,
+        "column": 11
+      }
+    },
+    "uid-10": {
+      "start": {
+        "line": 42,
+        "column": 4
+      },
+      "end": {
+        "line": 44,
+        "column": 11
+      }
+    },
+    "uid-11": {
+      "start": {
+        "line": 46,
+        "column": 4
+      },
+      "end": {
+        "line": 48,
+        "column": 11
+      }
+    },
+    "uid-12": {
+      "start": {
+        "line": 49,
+        "column": 4
+      },
+      "end": {
+        "line": 51,
+        "column": 11
+      }
+    },
+    "uid-13": {
+      "start": {
+        "line": 52,
+        "column": 4
+      },
+      "end": {
+        "line": 54,
+        "column": 11
+      }
+    },
+    "uid-14": {
+      "start": {
+        "line": 55,
+        "column": 4
+      },
+      "end": {
+        "line": 57,
+        "column": 11
+      }
+    },
+    "uid-15": {
+      "start": {
+        "line": 58,
+        "column": 4
+      },
+      "end": {
+        "line": 60,
+        "column": 11
+      }
+    },
+    "uid-16": {
+      "start": {
+        "line": 61,
+        "column": 4
+      },
+      "end": {
+        "line": 63,
+        "column": 11
+      }
+    },
+    "uid-17": {
+      "start": {
+        "line": 64,
+        "column": 4
+      },
+      "end": {
+        "line": 66,
+        "column": 11
+      }
+    },
+    "uid-18": {
+      "start": {
+        "line": 67,
+        "column": 4
+      },
+      "end": {
+        "line": 69,
+        "column": 11
+      }
+    },
+    "uid-19": {
+      "start": {
+        "line": 70,
+        "column": 4
+      },
+      "end": {
+        "line": 72,
+        "column": 11
+      }
+    },
+    "uid-20": {
+      "start": {
+        "line": 73,
+        "column": 4
+      },
+      "end": {
+        "line": 75,
+        "column": 11
+      }
+    },
+    "uid-21": {
+      "start": {
+        "line": 77,
+        "column": 4
+      },
+      "end": {
+        "line": 79,
+        "column": 11
+      }
+    },
+    "uid-22": {
+      "start": {
+        "line": 80,
+        "column": 4
+      },
+      "end": {
+        "line": 82,
+        "column": 11
+      }
+    },
+    "uid-23": {
+      "start": {
+        "line": 83,
+        "column": 4
+      },
+      "end": {
+        "line": 85,
+        "column": 11
+      }
+    },
+    "uid-24": {
+      "start": {
+        "line": 86,
+        "column": 4
+      },
+      "end": {
+        "line": 88,
+        "column": 11
+      }
+    },
+    "uid-25": {
+      "start": {
+        "line": 90,
+        "column": 4
+      },
+      "end": {
+        "line": 92,
+        "column": 11
+      }
+    },
+    "uid-26": {
+      "start": {
+        "line": 93,
+        "column": 4
+      },
+      "end": {
+        "line": 95,
+        "column": 11
+      }
+    },
+    "uid-27": {
+      "start": {
+        "line": 96,
+        "column": 4
+      },
+      "end": {
+        "line": 98,
+        "column": 11
+      }
+    },
+    "uid-28": {
+      "start": {
+        "line": 99,
+        "column": 4
+      },
+      "end": {
+        "line": 101,
+        "column": 11
+      }
+    },
+    "uid-29": {
+      "start": {
+        "line": 102,
+        "column": 4
+      },
+      "end": {
+        "line": 104,
+        "column": 11
+      }
+    },
+    "uid-30": {
+      "start": {
+        "line": 105,
+        "column": 4
+      },
+      "end": {
+        "line": 107,
+        "column": 11
+      }
+    },
+    "uid-31": {
+      "start": {
+        "line": 109,
+        "column": 4
+      },
+      "end": {
+        "line": 111,
+        "column": 11
+      }
+    },
+    "uid-32": {
+      "start": {
+        "line": 112,
+        "column": 4
+      },
+      "end": {
+        "line": 114,
+        "column": 11
+      }
+    },
+    "uid-33": {
+      "start": {
+        "line": 115,
+        "column": 4
+      },
+      "end": {
+        "line": 117,
+        "column": 11
+      }
+    },
+    "uid-34": {
+      "start": {
+        "line": 118,
+        "column": 4
+      },
+      "end": {
+        "line": 120,
+        "column": 11
+      }
+    },
+    "uid-35": {
+      "start": {
+        "line": 121,
+        "column": 4
+      },
+      "end": {
+        "line": 123,
+        "column": 11
+      }
+    },
+    "uid-36": {
+      "start": {
+        "line": 124,
+        "column": 4
+      },
+      "end": {
+        "line": 126,
+        "column": 11
+      }
+    },
+    "uid-37": {
+      "start": {
+        "line": 129,
+        "column": 2
+      },
+      "end": {
+        "line": 142,
+        "column": 14
+      }
+    }
+  }
+}

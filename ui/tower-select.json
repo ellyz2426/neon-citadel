@@ -1,0 +1,298 @@
+{
+  "element": {
+    "sourceTag": "container",
+    "type": "custom",
+    "children": [
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "TOWERS"
+        ],
+        "properties": {
+          "fontsize": "12",
+          "fontweight": "bold",
+          "color": "#00ccff",
+          "textalign": "center"
+        },
+        "dataUid": "uid-2"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Laser ($50)"
+        ],
+        "properties": {
+          "name": "btn-laser",
+          "fontsize": "11",
+          "color": "#00ffff",
+          "backgroundcolor": "#112233",
+          "padding": "6",
+          "borderradius": "4",
+          "bordercolor": "#004466",
+          "borderwidth": "1",
+          "textalign": "center",
+          "cursor": "pointer"
+        },
+        "dataUid": "uid-3"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Pulse ($80)"
+        ],
+        "properties": {
+          "name": "btn-pulse",
+          "fontsize": "11",
+          "color": "#ff4488",
+          "backgroundcolor": "#112233",
+          "padding": "6",
+          "borderradius": "4",
+          "bordercolor": "#442244",
+          "borderwidth": "1",
+          "textalign": "center",
+          "cursor": "pointer"
+        },
+        "dataUid": "uid-4"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Slow ($60)"
+        ],
+        "properties": {
+          "name": "btn-slow",
+          "fontsize": "11",
+          "color": "#44aaff",
+          "backgroundcolor": "#112233",
+          "padding": "6",
+          "borderradius": "4",
+          "bordercolor": "#224466",
+          "borderwidth": "1",
+          "textalign": "center",
+          "cursor": "pointer"
+        },
+        "dataUid": "uid-5"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Sniper ($120)"
+        ],
+        "properties": {
+          "name": "btn-sniper",
+          "fontsize": "11",
+          "color": "#ffaa00",
+          "backgroundcolor": "#112233",
+          "padding": "6",
+          "borderradius": "4",
+          "bordercolor": "#443300",
+          "borderwidth": "1",
+          "textalign": "center",
+          "cursor": "pointer"
+        },
+        "dataUid": "uid-6"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Chain ($100)"
+        ],
+        "properties": {
+          "name": "btn-chain",
+          "fontsize": "11",
+          "color": "#aa33ff",
+          "backgroundcolor": "#112233",
+          "padding": "6",
+          "borderradius": "4",
+          "bordercolor": "#330066",
+          "borderwidth": "1",
+          "textalign": "center",
+          "cursor": "pointer"
+        },
+        "dataUid": "uid-7"
+      },
+      {
+        "sourceTag": "container",
+        "type": "custom",
+        "children": [
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "1-5: Select tower"
+            ],
+            "properties": {
+              "fontsize": "8",
+              "color": "#446688",
+              "textalign": "center"
+            },
+            "dataUid": "uid-9"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Click: Place tower"
+            ],
+            "properties": {
+              "fontsize": "8",
+              "color": "#446688",
+              "textalign": "center"
+            },
+            "dataUid": "uid-10"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "F: Speed | P: Pause"
+            ],
+            "properties": {
+              "fontsize": "8",
+              "color": "#446688",
+              "textalign": "center"
+            },
+            "dataUid": "uid-11"
+          }
+        ],
+        "properties": {
+          "margintop": "6",
+          "flexdirection": "column",
+          "gap": "2"
+        },
+        "dataUid": "uid-8"
+      }
+    ],
+    "properties": {
+      "flexdirection": "column",
+      "alignitems": "stretch",
+      "gap": "6",
+      "width": "180",
+      "padding": "10",
+      "backgroundcolor": "#0a1520dd",
+      "borderradius": "8",
+      "bordercolor": "#004466",
+      "borderwidth": "1"
+    },
+    "dataUid": "uid-1"
+  },
+  "classes": {},
+  "ranges": {
+    "uid-1": {
+      "start": {
+        "line": 0,
+        "column": 0
+      },
+      "end": {
+        "line": 104,
+        "column": 12
+      }
+    },
+    "uid-2": {
+      "start": {
+        "line": 11,
+        "column": 2
+      },
+      "end": {
+        "line": 16,
+        "column": 16
+      }
+    },
+    "uid-3": {
+      "start": {
+        "line": 18,
+        "column": 2
+      },
+      "end": {
+        "line": 29,
+        "column": 21
+      }
+    },
+    "uid-4": {
+      "start": {
+        "line": 31,
+        "column": 2
+      },
+      "end": {
+        "line": 42,
+        "column": 21
+      }
+    },
+    "uid-5": {
+      "start": {
+        "line": 44,
+        "column": 2
+      },
+      "end": {
+        "line": 55,
+        "column": 20
+      }
+    },
+    "uid-6": {
+      "start": {
+        "line": 57,
+        "column": 2
+      },
+      "end": {
+        "line": 68,
+        "column": 23
+      }
+    },
+    "uid-7": {
+      "start": {
+        "line": 70,
+        "column": 2
+      },
+      "end": {
+        "line": 81,
+        "column": 22
+      }
+    },
+    "uid-8": {
+      "start": {
+        "line": 83,
+        "column": 2
+      },
+      "end": {
+        "line": 103,
+        "column": 14
+      }
+    },
+    "uid-9": {
+      "start": {
+        "line": 88,
+        "column": 4
+      },
+      "end": {
+        "line": 92,
+        "column": 29
+      }
+    },
+    "uid-10": {
+      "start": {
+        "line": 93,
+        "column": 4
+      },
+      "end": {
+        "line": 97,
+        "column": 30
+      }
+    },
+    "uid-11": {
+      "start": {
+        "line": 98,
+        "column": 4
+      },
+      "end": {
+        "line": 102,
+        "column": 31
+      }
+    }
+  }
+}

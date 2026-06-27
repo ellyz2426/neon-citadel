@@ -1,0 +1,380 @@
+{
+  "element": {
+    "sourceTag": "container",
+    "type": "custom",
+    "children": [
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Tower Info"
+        ],
+        "properties": {
+          "name": "tower-name",
+          "fontsize": "14",
+          "fontweight": "bold",
+          "color": "#00ffff"
+        },
+        "dataUid": "uid-2"
+      },
+      {
+        "sourceTag": "container",
+        "type": "custom",
+        "children": [
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Type: Laser"
+            ],
+            "properties": {
+              "name": "tower-type",
+              "fontsize": "11",
+              "color": "#88ccee"
+            },
+            "dataUid": "uid-4"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Level: 1/3"
+            ],
+            "properties": {
+              "name": "tower-level",
+              "fontsize": "11",
+              "color": "#88ccee"
+            },
+            "dataUid": "uid-5"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Damage: 10"
+            ],
+            "properties": {
+              "name": "tower-damage",
+              "fontsize": "11",
+              "color": "#ff8844"
+            },
+            "dataUid": "uid-6"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Range: 2.5"
+            ],
+            "properties": {
+              "name": "tower-range",
+              "fontsize": "11",
+              "color": "#44aaff"
+            },
+            "dataUid": "uid-7"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Fire Rate: 2.0/s"
+            ],
+            "properties": {
+              "name": "tower-fire-rate",
+              "fontsize": "11",
+              "color": "#ffcc00"
+            },
+            "dataUid": "uid-8"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Kills: 0"
+            ],
+            "properties": {
+              "name": "tower-kills",
+              "fontsize": "11",
+              "color": "#88aacc"
+            },
+            "dataUid": "uid-9"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "DPS: 0"
+            ],
+            "properties": {
+              "name": "tower-dps",
+              "fontsize": "10",
+              "color": "#66aacc"
+            },
+            "dataUid": "uid-10"
+          }
+        ],
+        "properties": {
+          "flexdirection": "column",
+          "gap": "4",
+          "width": "176"
+        },
+        "dataUid": "uid-3"
+      },
+      {
+        "sourceTag": "container",
+        "type": "custom",
+        "children": [
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Target: First"
+            ],
+            "properties": {
+              "name": "btn-target",
+              "fontsize": "10",
+              "color": "#88ccee",
+              "backgroundcolor": "#112233",
+              "padding": "6",
+              "borderradius": "4",
+              "bordercolor": "#334455",
+              "borderwidth": "1",
+              "textalign": "center",
+              "cursor": "pointer"
+            },
+            "dataUid": "uid-12"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Upgrade ($75)"
+            ],
+            "properties": {
+              "name": "btn-upgrade",
+              "fontsize": "12",
+              "fontweight": "bold",
+              "color": "#00ffcc",
+              "backgroundcolor": "#003344",
+              "padding": "8",
+              "borderradius": "4",
+              "bordercolor": "#00aa88",
+              "borderwidth": "1",
+              "textalign": "center",
+              "cursor": "pointer"
+            },
+            "dataUid": "uid-13"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Sell ($30)"
+            ],
+            "properties": {
+              "name": "btn-sell",
+              "fontsize": "12",
+              "color": "#ff6666",
+              "backgroundcolor": "#221111",
+              "padding": "8",
+              "borderradius": "4",
+              "bordercolor": "#663333",
+              "borderwidth": "1",
+              "textalign": "center",
+              "cursor": "pointer"
+            },
+            "dataUid": "uid-14"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Close"
+            ],
+            "properties": {
+              "name": "btn-close-info",
+              "fontsize": "10",
+              "color": "#446688",
+              "textalign": "center",
+              "cursor": "pointer",
+              "padding": "4"
+            },
+            "dataUid": "uid-15"
+          }
+        ],
+        "properties": {
+          "flexdirection": "column",
+          "gap": "6",
+          "width": "176",
+          "margintop": "4"
+        },
+        "dataUid": "uid-11"
+      }
+    ],
+    "properties": {
+      "flexdirection": "column",
+      "alignitems": "center",
+      "gap": "8",
+      "width": "200",
+      "padding": "12",
+      "backgroundcolor": "#0a1520ee",
+      "borderradius": "8",
+      "bordercolor": "#00ccff",
+      "borderwidth": "1"
+    },
+    "dataUid": "uid-1"
+  },
+  "classes": {},
+  "ranges": {
+    "uid-1": {
+      "start": {
+        "line": 0,
+        "column": 0
+      },
+      "end": {
+        "line": 121,
+        "column": 12
+      }
+    },
+    "uid-2": {
+      "start": {
+        "line": 11,
+        "column": 2
+      },
+      "end": {
+        "line": 16,
+        "column": 20
+      }
+    },
+    "uid-3": {
+      "start": {
+        "line": 18,
+        "column": 2
+      },
+      "end": {
+        "line": 64,
+        "column": 14
+      }
+    },
+    "uid-4": {
+      "start": {
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "line": 27,
+        "column": 23
+      }
+    },
+    "uid-5": {
+      "start": {
+        "line": 29,
+        "column": 4
+      },
+      "end": {
+        "line": 33,
+        "column": 22
+      }
+    },
+    "uid-6": {
+      "start": {
+        "line": 35,
+        "column": 4
+      },
+      "end": {
+        "line": 39,
+        "column": 22
+      }
+    },
+    "uid-7": {
+      "start": {
+        "line": 41,
+        "column": 4
+      },
+      "end": {
+        "line": 45,
+        "column": 22
+      }
+    },
+    "uid-8": {
+      "start": {
+        "line": 47,
+        "column": 4
+      },
+      "end": {
+        "line": 51,
+        "column": 28
+      }
+    },
+    "uid-9": {
+      "start": {
+        "line": 53,
+        "column": 4
+      },
+      "end": {
+        "line": 57,
+        "column": 20
+      }
+    },
+    "uid-10": {
+      "start": {
+        "line": 59,
+        "column": 4
+      },
+      "end": {
+        "line": 63,
+        "column": 18
+      }
+    },
+    "uid-11": {
+      "start": {
+        "line": 66,
+        "column": 2
+      },
+      "end": {
+        "line": 120,
+        "column": 14
+      }
+    },
+    "uid-12": {
+      "start": {
+        "line": 72,
+        "column": 4
+      },
+      "end": {
+        "line": 83,
+        "column": 25
+      }
+    },
+    "uid-13": {
+      "start": {
+        "line": 85,
+        "column": 4
+      },
+      "end": {
+        "line": 97,
+        "column": 25
+      }
+    },
+    "uid-14": {
+      "start": {
+        "line": 99,
+        "column": 4
+      },
+      "end": {
+        "line": 110,
+        "column": 22
+      }
+    },
+    "uid-15": {
+      "start": {
+        "line": 112,
+        "column": 4
+      },
+      "end": {
+        "line": 119,
+        "column": 17
+      }
+    }
+  }
+}

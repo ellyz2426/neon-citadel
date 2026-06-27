@@ -1,0 +1,826 @@
+{
+  "element": {
+    "sourceTag": "container",
+    "type": "custom",
+    "children": [
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "GAME STATISTICS"
+        ],
+        "properties": {
+          "fontsize": "20",
+          "fontweight": "bold",
+          "color": "#00ffff"
+        },
+        "dataUid": "uid-2"
+      },
+      {
+        "sourceTag": "container",
+        "type": "custom",
+        "children": [
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "OVERVIEW"
+            ],
+            "properties": {
+              "fontsize": "12",
+              "fontweight": "bold",
+              "color": "#66aacc"
+            },
+            "dataUid": "uid-4"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Waves: 0"
+            ],
+            "properties": {
+              "name": "stat-waves",
+              "fontsize": "10",
+              "color": "#88aacc",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-5"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Score: 0"
+            ],
+            "properties": {
+              "name": "stat-score",
+              "fontsize": "10",
+              "color": "#ffcc00",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-6"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Time: 0:00"
+            ],
+            "properties": {
+              "name": "stat-time",
+              "fontsize": "10",
+              "color": "#88aacc",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-7"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Difficulty: Normal"
+            ],
+            "properties": {
+              "name": "stat-difficulty",
+              "fontsize": "10",
+              "color": "#88aacc",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-8"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "ECONOMY"
+            ],
+            "properties": {
+              "fontsize": "12",
+              "fontweight": "bold",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-9"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Gold Earned: 0"
+            ],
+            "properties": {
+              "name": "stat-gold-earned",
+              "fontsize": "10",
+              "color": "#ffcc00",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-10"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Gold Spent: 0"
+            ],
+            "properties": {
+              "name": "stat-gold-spent",
+              "fontsize": "10",
+              "color": "#88aacc",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-11"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Interest Earned: 0"
+            ],
+            "properties": {
+              "name": "stat-interest",
+              "fontsize": "10",
+              "color": "#00ff88",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-12"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "COMBAT"
+            ],
+            "properties": {
+              "fontsize": "12",
+              "fontweight": "bold",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-13"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Total Kills: 0"
+            ],
+            "properties": {
+              "name": "stat-kills",
+              "fontsize": "10",
+              "color": "#ff4444",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-14"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Max Combo: 0x"
+            ],
+            "properties": {
+              "name": "stat-combo",
+              "fontsize": "10",
+              "color": "#ff8800",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-15"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Towers Built: 0"
+            ],
+            "properties": {
+              "name": "stat-towers-built",
+              "fontsize": "10",
+              "color": "#88aacc",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-16"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Towers Sold: 0"
+            ],
+            "properties": {
+              "name": "stat-towers-sold",
+              "fontsize": "10",
+              "color": "#88aacc",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-17"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Total Leaks: 0"
+            ],
+            "properties": {
+              "name": "stat-perfect",
+              "fontsize": "10",
+              "color": "#00ff88",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-18"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "TOWER KILLS"
+            ],
+            "properties": {
+              "fontsize": "12",
+              "fontweight": "bold",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-19"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Laser: 0"
+            ],
+            "properties": {
+              "name": "stat-laser-kills",
+              "fontsize": "10",
+              "color": "#00ffff",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-20"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Pulse: 0"
+            ],
+            "properties": {
+              "name": "stat-pulse-kills",
+              "fontsize": "10",
+              "color": "#ff4488",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-21"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Slow: 0"
+            ],
+            "properties": {
+              "name": "stat-slow-kills",
+              "fontsize": "10",
+              "color": "#44aaff",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-22"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Sniper: 0"
+            ],
+            "properties": {
+              "name": "stat-sniper-kills",
+              "fontsize": "10",
+              "color": "#ffaa00",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-23"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Chain: 0"
+            ],
+            "properties": {
+              "name": "stat-chain-kills",
+              "fontsize": "10",
+              "color": "#aa33ff",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-24"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "WAVE MODIFIERS"
+            ],
+            "properties": {
+              "fontsize": "12",
+              "fontweight": "bold",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-25"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "None encountered"
+            ],
+            "properties": {
+              "name": "stat-modifiers",
+              "fontsize": "10",
+              "color": "#88aacc",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-26"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "SPECIALS"
+            ],
+            "properties": {
+              "fontsize": "12",
+              "fontweight": "bold",
+              "color": "#66aacc",
+              "margintop": "6"
+            },
+            "dataUid": "uid-27"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Max Synergy: 0"
+            ],
+            "properties": {
+              "name": "stat-synergy",
+              "fontsize": "10",
+              "color": "#00ff88",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-28"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Critical Hits: 0"
+            ],
+            "properties": {
+              "name": "stat-crits",
+              "fontsize": "10",
+              "color": "#ffaa00",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-29"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Enemies Burned: 0"
+            ],
+            "properties": {
+              "name": "stat-burns",
+              "fontsize": "10",
+              "color": "#ff4444",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-30"
+          },
+          {
+            "sourceTag": "text",
+            "type": "custom",
+            "children": [
+              "Maps Played: None"
+            ],
+            "properties": {
+              "name": "stat-maps",
+              "fontsize": "10",
+              "color": "#88ccee",
+              "padding": "3",
+              "backgroundcolor": "#112233",
+              "borderradius": "3"
+            },
+            "dataUid": "uid-31"
+          }
+        ],
+        "properties": {
+          "flexdirection": "column",
+          "gap": "4",
+          "width": "388",
+          "margintop": "4"
+        },
+        "dataUid": "uid-3"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "CLOSE"
+        ],
+        "properties": {
+          "name": "btn-close-stats",
+          "fontsize": "14",
+          "color": "#00ffcc",
+          "backgroundcolor": "#003344",
+          "padding": "8",
+          "borderradius": "6",
+          "bordercolor": "#00aa88",
+          "borderwidth": "1",
+          "textalign": "center",
+          "cursor": "pointer",
+          "margintop": "8",
+          "width": "160"
+        },
+        "dataUid": "uid-32"
+      }
+    ],
+    "properties": {
+      "flexdirection": "column",
+      "alignitems": "center",
+      "gap": "8",
+      "width": "420",
+      "padding": "16",
+      "backgroundcolor": "#0a1520ee",
+      "borderradius": "12",
+      "bordercolor": "#00ccff",
+      "borderwidth": "1"
+    },
+    "dataUid": "uid-1"
+  },
+  "classes": {},
+  "ranges": {
+    "uid-1": {
+      "start": {
+        "line": 0,
+        "column": 0
+      },
+      "end": {
+        "line": 72,
+        "column": 12
+      }
+    },
+    "uid-2": {
+      "start": {
+        "line": 11,
+        "column": 2
+      },
+      "end": {
+        "line": 15,
+        "column": 25
+      }
+    },
+    "uid-3": {
+      "start": {
+        "line": 17,
+        "column": 2
+      },
+      "end": {
+        "line": 56,
+        "column": 14
+      }
+    },
+    "uid-4": {
+      "start": {
+        "line": 23,
+        "column": 4
+      },
+      "end": {
+        "line": 23,
+        "column": 73
+      }
+    },
+    "uid-5": {
+      "start": {
+        "line": 24,
+        "column": 4
+      },
+      "end": {
+        "line": 24,
+        "column": 128
+      }
+    },
+    "uid-6": {
+      "start": {
+        "line": 25,
+        "column": 4
+      },
+      "end": {
+        "line": 25,
+        "column": 128
+      }
+    },
+    "uid-7": {
+      "start": {
+        "line": 26,
+        "column": 4
+      },
+      "end": {
+        "line": 26,
+        "column": 129
+      }
+    },
+    "uid-8": {
+      "start": {
+        "line": 27,
+        "column": 4
+      },
+      "end": {
+        "line": 27,
+        "column": 143
+      }
+    },
+    "uid-9": {
+      "start": {
+        "line": 29,
+        "column": 4
+      },
+      "end": {
+        "line": 29,
+        "column": 86
+      }
+    },
+    "uid-10": {
+      "start": {
+        "line": 30,
+        "column": 4
+      },
+      "end": {
+        "line": 30,
+        "column": 140
+      }
+    },
+    "uid-11": {
+      "start": {
+        "line": 31,
+        "column": 4
+      },
+      "end": {
+        "line": 31,
+        "column": 138
+      }
+    },
+    "uid-12": {
+      "start": {
+        "line": 32,
+        "column": 4
+      },
+      "end": {
+        "line": 32,
+        "column": 141
+      }
+    },
+    "uid-13": {
+      "start": {
+        "line": 34,
+        "column": 4
+      },
+      "end": {
+        "line": 34,
+        "column": 85
+      }
+    },
+    "uid-14": {
+      "start": {
+        "line": 35,
+        "column": 4
+      },
+      "end": {
+        "line": 35,
+        "column": 134
+      }
+    },
+    "uid-15": {
+      "start": {
+        "line": 36,
+        "column": 4
+      },
+      "end": {
+        "line": 36,
+        "column": 133
+      }
+    },
+    "uid-16": {
+      "start": {
+        "line": 37,
+        "column": 4
+      },
+      "end": {
+        "line": 37,
+        "column": 142
+      }
+    },
+    "uid-17": {
+      "start": {
+        "line": 38,
+        "column": 4
+      },
+      "end": {
+        "line": 38,
+        "column": 140
+      }
+    },
+    "uid-18": {
+      "start": {
+        "line": 39,
+        "column": 4
+      },
+      "end": {
+        "line": 39,
+        "column": 136
+      }
+    },
+    "uid-19": {
+      "start": {
+        "line": 41,
+        "column": 4
+      },
+      "end": {
+        "line": 41,
+        "column": 90
+      }
+    },
+    "uid-20": {
+      "start": {
+        "line": 42,
+        "column": 4
+      },
+      "end": {
+        "line": 42,
+        "column": 134
+      }
+    },
+    "uid-21": {
+      "start": {
+        "line": 43,
+        "column": 4
+      },
+      "end": {
+        "line": 43,
+        "column": 134
+      }
+    },
+    "uid-22": {
+      "start": {
+        "line": 44,
+        "column": 4
+      },
+      "end": {
+        "line": 44,
+        "column": 132
+      }
+    },
+    "uid-23": {
+      "start": {
+        "line": 45,
+        "column": 4
+      },
+      "end": {
+        "line": 45,
+        "column": 136
+      }
+    },
+    "uid-24": {
+      "start": {
+        "line": 46,
+        "column": 4
+      },
+      "end": {
+        "line": 46,
+        "column": 134
+      }
+    },
+    "uid-25": {
+      "start": {
+        "line": 48,
+        "column": 4
+      },
+      "end": {
+        "line": 48,
+        "column": 93
+      }
+    },
+    "uid-26": {
+      "start": {
+        "line": 49,
+        "column": 4
+      },
+      "end": {
+        "line": 49,
+        "column": 140
+      }
+    },
+    "uid-27": {
+      "start": {
+        "line": 51,
+        "column": 4
+      },
+      "end": {
+        "line": 51,
+        "column": 87
+      }
+    },
+    "uid-28": {
+      "start": {
+        "line": 52,
+        "column": 4
+      },
+      "end": {
+        "line": 52,
+        "column": 136
+      }
+    },
+    "uid-29": {
+      "start": {
+        "line": 53,
+        "column": 4
+      },
+      "end": {
+        "line": 53,
+        "column": 136
+      }
+    },
+    "uid-30": {
+      "start": {
+        "line": 54,
+        "column": 4
+      },
+      "end": {
+        "line": 54,
+        "column": 137
+      }
+    },
+    "uid-31": {
+      "start": {
+        "line": 55,
+        "column": 4
+      },
+      "end": {
+        "line": 55,
+        "column": 136
+      }
+    },
+    "uid-32": {
+      "start": {
+        "line": 58,
+        "column": 2
+      },
+      "end": {
+        "line": 71,
+        "column": 15
+      }
+    }
+  }
+}

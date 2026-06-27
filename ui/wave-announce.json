@@ -1,0 +1,125 @@
+{
+  "element": {
+    "sourceTag": "container",
+    "type": "custom",
+    "children": [
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "WAVE 1"
+        ],
+        "properties": {
+          "name": "wave-announce",
+          "fontsize": "24",
+          "fontweight": "bold",
+          "color": "#00ffff"
+        },
+        "dataUid": "uid-2"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "Incoming enemies!"
+        ],
+        "properties": {
+          "name": "wave-desc",
+          "fontsize": "12",
+          "color": "#88ccee"
+        },
+        "dataUid": "uid-3"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [
+          "4 Grunts"
+        ],
+        "properties": {
+          "name": "wave-enemies",
+          "fontsize": "10",
+          "color": "#ffaa00"
+        },
+        "dataUid": "uid-4"
+      },
+      {
+        "sourceTag": "text",
+        "type": "custom",
+        "children": [],
+        "properties": {
+          "name": "wave-reward",
+          "fontsize": "9",
+          "color": "#00ff88"
+        },
+        "dataUid": "uid-5"
+      }
+    ],
+    "properties": {
+      "flexdirection": "column",
+      "alignitems": "center",
+      "justifycontent": "center",
+      "gap": "6",
+      "width": "300",
+      "padding": "16",
+      "backgroundcolor": "#0a1520cc",
+      "borderradius": "10",
+      "bordercolor": "#00ffff",
+      "borderwidth": "2"
+    },
+    "dataUid": "uid-1"
+  },
+  "classes": {},
+  "ranges": {
+    "uid-1": {
+      "start": {
+        "line": 0,
+        "column": 0
+      },
+      "end": {
+        "line": 36,
+        "column": 12
+      }
+    },
+    "uid-2": {
+      "start": {
+        "line": 12,
+        "column": 2
+      },
+      "end": {
+        "line": 17,
+        "column": 16
+      }
+    },
+    "uid-3": {
+      "start": {
+        "line": 19,
+        "column": 2
+      },
+      "end": {
+        "line": 23,
+        "column": 27
+      }
+    },
+    "uid-4": {
+      "start": {
+        "line": 25,
+        "column": 2
+      },
+      "end": {
+        "line": 29,
+        "column": 18
+      }
+    },
+    "uid-5": {
+      "start": {
+        "line": 31,
+        "column": 2
+      },
+      "end": {
+        "line": 35,
+        "column": 10
+      }
+    }
+  }
+}
