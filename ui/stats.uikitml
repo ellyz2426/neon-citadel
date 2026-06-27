@@ -1,0 +1,66 @@
+<container
+  flexDirection="column"
+  alignItems="center"
+  gap="8"
+  width="420"
+  padding="16"
+  backgroundColor="#0a1520ee"
+  borderRadius="12"
+  borderColor="#00ccff"
+  borderWidth="1"
+>
+  <text
+    fontSize="20"
+    fontWeight="bold"
+    color="#00ffff"
+  >GAME STATISTICS</text>
+
+  <container
+    flexDirection="column"
+    gap="4"
+    width="388"
+    marginTop="4"
+  >
+    <text fontSize="12" fontWeight="bold" color="#66aacc">OVERVIEW</text>
+    <text name="stat-waves" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">Waves: 0</text>
+    <text name="stat-score" fontSize="10" color="#ffcc00" padding="3" backgroundColor="#112233" borderRadius="3">Score: 0</text>
+    <text name="stat-time" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">Time: 0:00</text>
+    <text name="stat-difficulty" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">Difficulty: Normal</text>
+
+    <text fontSize="12" fontWeight="bold" color="#66aacc" marginTop="6">ECONOMY</text>
+    <text name="stat-gold-earned" fontSize="10" color="#ffcc00" padding="3" backgroundColor="#112233" borderRadius="3">Gold Earned: 0</text>
+    <text name="stat-gold-spent" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">Gold Spent: 0</text>
+    <text name="stat-interest" fontSize="10" color="#00ff88" padding="3" backgroundColor="#112233" borderRadius="3">Interest Earned: 0</text>
+
+    <text fontSize="12" fontWeight="bold" color="#66aacc" marginTop="6">COMBAT</text>
+    <text name="stat-kills" fontSize="10" color="#ff4444" padding="3" backgroundColor="#112233" borderRadius="3">Total Kills: 0</text>
+    <text name="stat-combo" fontSize="10" color="#ff8800" padding="3" backgroundColor="#112233" borderRadius="3">Max Combo: 0x</text>
+    <text name="stat-towers-built" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">Towers Built: 0</text>
+    <text name="stat-towers-sold" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">Towers Sold: 0</text>
+
+    <text fontSize="12" fontWeight="bold" color="#66aacc" marginTop="6">TOWER KILLS</text>
+    <text name="stat-laser-kills" fontSize="10" color="#00ffff" padding="3" backgroundColor="#112233" borderRadius="3">Laser: 0</text>
+    <text name="stat-pulse-kills" fontSize="10" color="#ff4488" padding="3" backgroundColor="#112233" borderRadius="3">Pulse: 0</text>
+    <text name="stat-slow-kills" fontSize="10" color="#44aaff" padding="3" backgroundColor="#112233" borderRadius="3">Slow: 0</text>
+    <text name="stat-sniper-kills" fontSize="10" color="#ffaa00" padding="3" backgroundColor="#112233" borderRadius="3">Sniper: 0</text>
+    <text name="stat-chain-kills" fontSize="10" color="#aa33ff" padding="3" backgroundColor="#112233" borderRadius="3">Chain: 0</text>
+
+    <text fontSize="12" fontWeight="bold" color="#66aacc" marginTop="6">WAVE MODIFIERS</text>
+    <text name="stat-modifiers" fontSize="10" color="#88aacc" padding="3" backgroundColor="#112233" borderRadius="3">None encountered</text>
+  </container>
+
+  <text
+    name="btn-close-stats"
+    fontSize="14"
+    color="#00ffcc"
+    backgroundColor="#003344"
+    padding="8"
+    borderRadius="6"
+    borderColor="#00aa88"
+    borderWidth="1"
+    textAlign="center"
+    cursor="pointer"
+    marginTop="8"
+    width="160"
+  >CLOSE</text>
+</container>

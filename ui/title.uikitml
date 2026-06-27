@@ -141,5 +141,19 @@
       cursor="pointer"
       hover-backgroundColor="#332200"
     >ACHIEVEMENTS</text>
+
+    <text
+      name="btn-stats"
+      fontSize="14"
+      color="#88ccee"
+      backgroundColor="#112233"
+      padding="8"
+      borderRadius="6"
+      borderColor="#336688"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+      hover-backgroundColor="#223344"
+    >STATISTICS</text>
   </container>
 </container>

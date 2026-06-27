@@ -78,6 +78,19 @@
     <text fontSize="10" color="#88aacc">
       A: Upgrade | B: Sell
     </text>
+
+    <text fontSize="11" color="#66aacc" marginTop="6">
+      NEW FEATURES:
+    </text>
+    <text fontSize="10" color="#00ff88">
+      Endless Mode: Waves continue past 25!
+    </text>
+    <text fontSize="10" color="#ffcc00">
+      Gold Interest: Earn 10% of gold each wave
+    </text>
+    <text fontSize="10" color="#ff4488">
+      Wave Modifiers: Armored, Haste, Regen, Swarm, Shield
+    </text>
   </container>
 
   <text

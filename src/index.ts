@@ -28,11 +28,12 @@ interface RuntimeInput {
 // ============================================================
 // TYPES
 // ============================================================
-type Screen = 'title' | 'playing' | 'paused' | 'gameover' | 'wave-complete' | 'tower-select' | 'help' | 'achievements';
+type Screen = 'title' | 'playing' | 'paused' | 'gameover' | 'wave-complete' | 'tower-select' | 'help' | 'achievements' | 'stats';
 type TowerType = 'laser' | 'pulse' | 'slow' | 'sniper' | 'chain';
 type EnemyType = 'grunt' | 'fast' | 'tank' | 'boss' | 'swarm' | 'ghost';
 type Difficulty = 'easy' | 'normal' | 'hard';
 type TargetMode = 'first' | 'last' | 'strongest' | 'weakest';
+type WaveModifier = 'none' | 'armored' | 'haste' | 'regen' | 'swarm' | 'shield';
 
 interface TowerDef {
   name: string;
@@ -84,6 +85,10 @@ interface Enemy {
   healthBg: Mesh;
   slowTimer: number;
   alive: boolean;
+  regenRate: number;
+  shieldHp: number;
+  maxShieldHp: number;
+  shieldMesh: Mesh | null;
 }
 
 interface Projectile {
@@ -97,6 +102,7 @@ interface Projectile {
 
 interface WaveDef {
   enemies: Array<{ type: EnemyType; count: number; delay: number }>;
+  modifier: WaveModifier;
 }
 
 interface DamageNumber {
@@ -152,7 +158,12 @@ const ACHIEVEMENT_DEFS: AchievementDef[] = [
   { id: 'big-spender', name: 'Big Spender', desc: 'Spend 2000+ gold', check: g => g.totalGoldSpent >= 2000 },
   { id: 'laser-focus', name: 'Laser Focus', desc: '30 kills with Laser towers', check: g => g.towerKillsByType.laser >= 30 },
   { id: 'fortress', name: 'Fortress', desc: 'Have 15 towers at once', check: g => g.towers.length >= 15 },
-  { id: 'hard-won', name: 'Hard Won', desc: 'Beat game on Hard', check: g => g.wave >= TOTAL_WAVES && g.difficulty === 'hard' },
+  { id: 'hard-won', name: 'Hard Won', desc: 'Beat wave 25 on Hard', check: g => g.wave >= TOTAL_WAVES && g.difficulty === 'hard' },
+  { id: 'endless-5', name: 'Endless 5', desc: 'Survive 5 endless waves', check: g => g.endlessMode && g.wave >= TOTAL_WAVES + 5 },
+  { id: 'endless-10', name: 'Endless 10', desc: 'Survive 10 endless waves', check: g => g.endlessMode && g.wave >= TOTAL_WAVES + 10 },
+  { id: 'shield-breaker', name: 'Shield Breaker', desc: 'Beat a shielded wave', check: g => g.modifiersEncountered.has('shield') && g.wave > 0 },
+  { id: 'modifier-master', name: 'Modifier Master', desc: 'Encounter all 5 wave modifiers', check: g => g.modifiersEncountered.size >= 5 },
+  { id: 'interest-earner', name: 'Interest Earner', desc: 'Earn 100+ gold from interest', check: g => g.totalInterestEarned >= 100 },
 ];
 
 // ============================================================
@@ -198,6 +209,35 @@ const ENEMY_DEFS: Record<EnemyType, EnemyDef> = {
   ghost: { name: 'Ghost', hp: 40, speed: 1.0, reward: 20, color: '#ffffff', scale: 0.9 },
 };
 
+// Wave modifier definitions
+const WAVE_MODIFIER_DEFS: Record<WaveModifier, { name: string; color: string; desc: string }> = {
+  none:    { name: '', color: '#88aacc', desc: '' },
+  armored: { name: 'ARMORED', color: '#8844ff', desc: '+60% HP' },
+  haste:   { name: 'HASTE', color: '#ffaa00', desc: '+40% Speed' },
+  regen:   { name: 'REGEN', color: '#44ff44', desc: 'Enemies regenerate' },
+  swarm:   { name: 'SWARM', color: '#ff4488', desc: '2x count, -40% HP' },
+  shield:  { name: 'SHIELDED', color: '#00ccff', desc: 'Enemies have shields' },
+};
+
+function getWaveModifier(waveNum: number): WaveModifier {
+  if (waveNum < 5) return 'none';
+  // Specific scripted modifiers for key waves
+  if (waveNum === 5 || waveNum === 10) return 'armored';
+  if (waveNum === 7 || waveNum === 12) return 'haste';
+  if (waveNum === 15) return 'regen';
+  if (waveNum === 8 || waveNum === 18) return 'swarm';
+  if (waveNum === 20) return 'shield';
+  // Beyond wave 20 / endless: random modifiers
+  if (waveNum > 20) {
+    const mods: WaveModifier[] = ['none', 'armored', 'haste', 'regen', 'swarm', 'shield'];
+    // More likely to get modifiers as waves increase
+    if (Math.random() < 0.3 + (waveNum - 20) * 0.02) {
+      return mods[1 + Math.floor(Math.random() * (mods.length - 1))];
+    }
+  }
+  return 'none';
+}
+
 function generateWaves(count: number): WaveDef[] {
   const waves: WaveDef[] = [];
   for (let w = 0; w < count; w++) {
@@ -220,9 +260,31 @@ function generateWaves(count: number): WaveDef[] {
       enemies.push({ type: 'ghost', count: Math.floor(baseCount * 0.1), delay: 1.0 });
       if ((w + 1) % 5 === 0) enemies.push({ type: 'boss', count: 1, delay: 3.0 });
     }
-    waves.push({ enemies });
+    waves.push({ enemies, modifier: getWaveModifier(w) });
   }
   return waves;
+}
+
+// Generate an endless wave on the fly (beyond wave 25)
+function generateEndlessWave(waveNum: number): WaveDef {
+  const enemies: WaveDef['enemies'] = [];
+  const baseCount = 4 + Math.floor(waveNum * 1.5);
+  const scale = 1 + (waveNum - TOTAL_WAVES) * 0.1;
+
+  // Mix all enemy types with increasing variety
+  enemies.push({ type: 'tank', count: Math.floor(baseCount * 0.15 * scale), delay: 1.2 });
+  enemies.push({ type: 'fast', count: Math.floor(baseCount * 0.25 * scale), delay: 0.35 });
+  enemies.push({ type: 'swarm', count: Math.floor(baseCount * 0.3 * scale), delay: 0.25 });
+  enemies.push({ type: 'ghost', count: Math.floor(baseCount * 0.15 * scale), delay: 0.8 });
+  enemies.push({ type: 'grunt', count: Math.floor(baseCount * 0.15 * scale), delay: 0.6 });
+
+  // Boss every 5 waves, with extra bosses in deeper endless
+  if ((waveNum + 1) % 5 === 0) {
+    const bossCount = 1 + Math.floor((waveNum - TOTAL_WAVES) / 10);
+    enemies.push({ type: 'boss', count: bossCount, delay: 2.5 });
+  }
+
+  return { enemies, modifier: getWaveModifier(waveNum) };
 }
 
 const TOTAL_WAVES = 25;
@@ -312,6 +374,20 @@ class GameState {
   // Newly unlocked achievements for notification
   pendingAchievements: string[] = [];
 
+  // Endless mode
+  endlessMode = false;
+  endlessWaves: WaveDef[] = [];
+
+  // Gold interest system
+  totalInterestEarned = 0;
+
+  // Wave modifier tracking
+  currentWaveModifier: WaveModifier = 'none';
+  modifiersEncountered: Set<WaveModifier> = new Set();
+
+  // Game timer
+  gameTimeSeconds = 0;
+
   constructor() {
     this.save = loadSave();
     for (let r = 0; r < GRID_SIZE; r++) {
@@ -352,6 +428,12 @@ class GameState {
     this.maxCombo = 0;
     this.comboScore = 0;
     this.pendingAchievements = [];
+    this.endlessMode = false;
+    this.endlessWaves = [];
+    this.totalInterestEarned = 0;
+    this.currentWaveModifier = 'none';
+    this.modifiersEncountered = new Set();
+    this.gameTimeSeconds = 0;
   }
 }
 
@@ -601,7 +683,7 @@ class SceneBuilder {
     return ring;
   }
 
-  createEnemyMesh(type: EnemyType): { group: Group; healthBar: Mesh; healthBg: Mesh } {
+  createEnemyMesh(type: EnemyType, hasShield: boolean = false): { group: Group; healthBar: Mesh; healthBg: Mesh; shieldMesh: Mesh | null } {
     const def = ENEMY_DEFS[type];
     const col = new Color(def.color);
     const group = new Group();
@@ -637,6 +719,17 @@ class SceneBuilder {
     bodyMesh.position.y = s + 0.005;
     group.add(bodyMesh);
 
+    // Shield visual (translucent outer sphere)
+    let shieldMesh: Mesh | null = null;
+    if (hasShield) {
+      shieldMesh = new Mesh(
+        new SphereGeometry(s * 1.3, 12, 8),
+        new MeshBasicMaterial({ color: 0x00ccff, transparent: true, opacity: 0.25 })
+      );
+      shieldMesh.position.y = s + 0.005;
+      group.add(shieldMesh);
+    }
+
     const hbW = 0.04;
     const healthBg = new Mesh(
       new BoxGeometry(hbW, 0.003, 0.003),
@@ -652,7 +745,7 @@ class SceneBuilder {
     healthBar.position.y = s * 2 + 0.015;
     group.add(healthBar);
 
-    return { group, healthBar, healthBg };
+    return { group, healthBar, healthBg, shieldMesh };
   }
 
   spawnDeathParticles(position: Vector3, color: Color, count: number): Particle[] {
@@ -755,11 +848,33 @@ class GameLogic {
   }
 
   startNextWave(): void {
-    if (this.game.wave >= TOTAL_WAVES) {
-      this.endGame(true);
-      return;
+    // Gold interest system: earn 1 gold per 10 held (capped at 25)
+    if (this.game.wave > 0) {
+      const interest = Math.min(25, Math.floor(this.game.gold / 10));
+      if (interest > 0) {
+        this.game.gold += interest;
+        this.game.totalGoldEarned += interest;
+        this.game.totalInterestEarned += interest;
+      }
     }
-    const waveDef = WAVES[this.game.wave];
+
+    // Check if entering endless mode (only endGame on wave 25 if not endless)
+    let waveDef: WaveDef;
+    if (this.game.wave < TOTAL_WAVES) {
+      waveDef = WAVES[this.game.wave];
+    } else {
+      // Endless mode: generate waves on the fly
+      if (!this.game.endlessMode) {
+        this.game.endlessMode = true;
+      }
+      waveDef = generateEndlessWave(this.game.wave);
+    }
+
+    this.game.currentWaveModifier = waveDef.modifier;
+    if (waveDef.modifier !== 'none') {
+      this.game.modifiersEncountered.add(waveDef.modifier);
+    }
+
     this.game.spawnQueue = [];
     let totalCount = 0;
     for (const group of waveDef.enemies) {
@@ -815,6 +930,24 @@ class GameLogic {
     tower.level++;
     tower.group.scale.setScalar(1 + (tower.level - 1) * 0.15);
 
+    // Update tower visual (brighter glow per level)
+    const col = new Color(TOWER_DEFS[tower.type].color);
+    const glowIntensity = 0.15 + (tower.level - 1) * 0.15;
+    const glow = tower.group.children.find(c => c instanceof PointLight) as PointLight | undefined;
+    if (glow) {
+      glow.intensity = glowIntensity;
+      glow.distance = 0.3 + (tower.level - 1) * 0.1;
+    }
+
+    // Add level ring indicators
+    const levelRing = new Mesh(
+      new TorusGeometry(CELL_SIZE * (0.3 + tower.level * 0.02), 0.002, 4, 16),
+      new MeshBasicMaterial({ color: col, transparent: true, opacity: 0.3 + tower.level * 0.15 })
+    );
+    levelRing.rotation.x = Math.PI / 2;
+    levelRing.position.y = 0.003;
+    tower.group.add(levelRing);
+
     // Update range ring
     if (tower.rangeMesh) {
       this.scene.towerGroup.remove(tower.rangeMesh);
@@ -844,18 +977,47 @@ class GameLogic {
     const def = ENEMY_DEFS[type];
     const waveScale = 1 + this.game.wave * 0.15;
     const diffMult = DIFFICULTY_MULTS[this.game.difficulty];
-    const { group, healthBar, healthBg } = this.scene.createEnemyMesh(type);
+    const modifier = this.game.currentWaveModifier;
+
+    // Modifier adjustments
+    let hpMult = 1.0;
+    let speedMult = 1.0;
+    let countMult = 1.0;
+    let hasShield = false;
+    let regenRate = 0;
+
+    switch (modifier) {
+      case 'armored': hpMult = 1.6; break;
+      case 'haste': speedMult = 1.4; break;
+      case 'regen': regenRate = 3; break; // 3 HP/sec
+      case 'swarm': countMult = 2; hpMult = 0.6; break;
+      case 'shield': hasShield = true; break;
+    }
+
+    // Endless mode scaling
+    let endlessScale = 1.0;
+    if (this.game.endlessMode) {
+      endlessScale = 1 + (this.game.wave - TOTAL_WAVES) * 0.08;
+    }
+
+    const { group, healthBar, healthBg, shieldMesh } = this.scene.createEnemyMesh(type, hasShield);
     const startPos = this.game.gridToWorld(PATH_COORDS[0][0], PATH_COORDS[0][1]);
     group.position.copy(startPos);
     this.scene.enemyGroup.add(group);
-    const scaledHp = Math.floor(def.hp * waveScale * diffMult.hpMult);
+
+    const scaledHp = Math.floor(def.hp * waveScale * diffMult.hpMult * hpMult * endlessScale);
     const scaledReward = Math.floor(def.reward * diffMult.rewardMult);
+    const shieldAmount = hasShield ? Math.floor(scaledHp * 0.4) : 0;
+
     const enemy: Enemy = {
       type, hp: scaledHp, maxHp: scaledHp,
-      speed: def.speed * diffMult.speedMult, reward: scaledReward,
+      speed: def.speed * diffMult.speedMult * speedMult, reward: scaledReward,
       pathIdx: 0, pathProgress: 0,
       group, healthBar, healthBg,
       slowTimer: 0, alive: true,
+      regenRate: regenRate * endlessScale,
+      shieldHp: shieldAmount, maxShieldHp: shieldAmount,
+      shieldMesh,
     };
     this.game.enemies.push(enemy);
   }
@@ -868,6 +1030,12 @@ class GameLogic {
         ? enemy.speed * 0.4 * CELL_SIZE
         : enemy.speed * CELL_SIZE;
       enemy.slowTimer = Math.max(0, enemy.slowTimer - delta);
+
+      // Regen modifier: heal over time
+      if (enemy.regenRate > 0) {
+        enemy.hp = Math.min(enemy.maxHp, enemy.hp + enemy.regenRate * delta);
+      }
+
       enemy.pathProgress += speed * delta;
 
       while (enemy.pathProgress >= 1 && enemy.pathIdx < PATH_COORDS.length - 1) {
@@ -902,6 +1070,27 @@ class GameLogic {
           color: 0xffffff, transparent: true,
           opacity: 0.3 + Math.sin(Date.now() * 0.005) * 0.2,
         });
+      }
+
+      // Shield visual update
+      if (enemy.shieldMesh) {
+        if (enemy.shieldHp > 0) {
+          const shieldRatio = enemy.shieldHp / enemy.maxShieldHp;
+          (enemy.shieldMesh.material as MeshBasicMaterial).opacity = 0.1 + shieldRatio * 0.2;
+          enemy.shieldMesh.scale.setScalar(0.9 + Math.sin(Date.now() * 0.003) * 0.05);
+        } else {
+          enemy.shieldMesh.visible = false;
+        }
+      }
+
+      // Regen visual: green tint pulse
+      if (enemy.regenRate > 0 && enemy.type !== 'ghost') {
+        const bodyMesh = enemy.group.children[0] as Mesh;
+        const mat = bodyMesh.material as MeshStandardMaterial;
+        if (mat.emissive) {
+          const pulse = 0.15 + Math.sin(Date.now() * 0.004) * 0.1;
+          mat.emissive.setRGB(0, pulse, 0);
+        }
       }
     }
 
@@ -1121,7 +1310,24 @@ class GameLogic {
 
   damageEnemy(enemy: Enemy, damage: number, tower: Tower | null): void {
     if (!enemy.alive) return;
-    enemy.hp -= damage;
+
+    let remainingDamage = damage;
+
+    // Shield absorbs damage first
+    if (enemy.shieldHp > 0) {
+      const shieldAbsorb = Math.min(enemy.shieldHp, remainingDamage);
+      enemy.shieldHp -= shieldAbsorb;
+      remainingDamage -= shieldAbsorb;
+
+      // Shield break effect
+      if (enemy.shieldHp <= 0 && enemy.shieldMesh) {
+        const shieldColor = new Color(0x00ccff);
+        const shieldParticles = this.scene.spawnDeathParticles(enemy.group.position.clone(), shieldColor, 4);
+        this.game.particles.push(...shieldParticles);
+      }
+    }
+
+    enemy.hp -= remainingDamage;
 
     // Spawn damage indicator
     const col = tower ? new Color(TOWER_DEFS[tower.type].color) : new Color(0xff4444);
@@ -1218,16 +1424,20 @@ class GameLogic {
       this.game.totalGoldEarned += 20 + this.game.wave * 5;
       this.game.score += 100 * this.game.wave;
 
+      // Extra score bonus for endless waves
+      if (this.game.endlessMode) {
+        const endlessBonus = (this.game.wave - TOTAL_WAVES) * 50;
+        this.game.score += endlessBonus;
+      }
+
       // Check achievements after wave
       this.checkAchievements();
 
-      if (this.game.wave >= TOTAL_WAVES) {
-        this.endGame(true);
-      } else {
-        setTimeout(() => {
-          if (this.game.screen === 'playing') this.startNextWave();
-        }, 2000);
-      }
+      // In endless mode, waves keep coming. Regular mode ends at TOTAL_WAVES.
+      // Player can still lose by running out of lives.
+      setTimeout(() => {
+        if (this.game.screen === 'playing') this.startNextWave();
+      }, 2000);
     }
   }
 
@@ -1333,6 +1543,7 @@ class GameLogic {
 
     if (this.game.screen !== 'playing' || this.game.paused) return;
     const dt = delta * this.game.gameSpeed;
+    this.game.gameTimeSeconds += dt;
     this.updateSpawning(dt);
     this.updateEnemies(dt);
     this.updateTowers(dt);
@@ -1359,6 +1570,7 @@ class UIManager {
   towerInfoDoc: UIKitDocument | null = null;
   achievementsDoc: UIKitDocument | null = null;
   waveAnnounceDoc: UIKitDocument | null = null;
+  statsDoc: UIKitDocument | null = null;
 
   hudEntity: any = null;
   titleEntity: any = null;
@@ -1369,6 +1581,7 @@ class UIManager {
   towerInfoEntity: any = null;
   achievementsEntity: any = null;
   waveAnnounceEntity: any = null;
+  statsEntity: any = null;
 
   constructor(game: GameState, logic: GameLogic) {
     this.game = game;
@@ -1393,6 +1606,12 @@ class UIManager {
     btnAch?.addEventListener('click', () => {
       this.game.screen = 'achievements';
       this.updateAchievements();
+      this.updateVisibility();
+    });
+    const btnStats = doc.getElementById('btn-stats') as UIKit.Text | undefined;
+    btnStats?.addEventListener('click', () => {
+      this.game.screen = 'stats';
+      this.updateStats();
       this.updateVisibility();
     });
 
@@ -1470,6 +1689,12 @@ class UIManager {
     btnMenu?.addEventListener('click', () => {
       this.game.screen = 'title';
       this.logic.clearAll();
+      this.updateVisibility();
+    });
+    const btnStatsGameover = doc.getElementById('btn-stats-gameover') as UIKit.Text | undefined;
+    btnStatsGameover?.addEventListener('click', () => {
+      this.game.screen = 'stats';
+      this.updateStats();
       this.updateVisibility();
     });
   }
@@ -1551,6 +1776,16 @@ class UIManager {
     this.waveAnnounceEntity = entity;
   }
 
+  bindStats(doc: UIKitDocument, entity: any): void {
+    this.statsDoc = doc;
+    this.statsEntity = entity;
+    const btnClose = doc.getElementById('btn-close-stats') as UIKit.Text | undefined;
+    btnClose?.addEventListener('click', () => {
+      this.game.screen = 'title';
+      this.updateVisibility();
+    });
+  }
+
   updateHud(): void {
     if (!this.hudDoc) return;
     const setText = (id: string, text: string) => {
@@ -1559,11 +1794,20 @@ class UIManager {
     };
     setText('gold-text', `Gold: ${this.game.gold}`);
     setText('lives-text', `Lives: ${this.game.lives}`);
-    setText('wave-text', `Wave: ${this.game.wave + 1}/${TOTAL_WAVES}`);
+    const waveLabel = this.game.endlessMode
+      ? `Wave: ${this.game.wave + 1} (ENDLESS)`
+      : `Wave: ${this.game.wave + 1}/${TOTAL_WAVES}`;
+    setText('wave-text', waveLabel);
     setText('score-text', `Score: ${this.game.score}`);
     setText('kills-text', `Kills: ${this.game.totalKills}`);
     setText('speed-text', `${this.game.gameSpeed}x`);
-    setText('diff-text', this.game.difficulty.toUpperCase());
+
+    // Show difficulty + modifier
+    const modDef = WAVE_MODIFIER_DEFS[this.game.currentWaveModifier];
+    const diffLabel = modDef.name
+      ? `${this.game.difficulty.toUpperCase()} | ${modDef.name}`
+      : this.game.difficulty.toUpperCase();
+    setText('diff-text', diffLabel);
 
     const selected = this.game.selectedTowerType;
     const def = TOWER_DEFS[selected];
@@ -1661,13 +1905,17 @@ class UIManager {
   updateGameover(): void {
     if (!this.gameoverDoc) return;
     const won = this.game.wave >= TOTAL_WAVES;
+    const endlessLabel = this.game.endlessMode ? ` (Endless Wave ${this.game.wave})` : '';
     const setText = (id: string, text: string) => {
       const el = this.gameoverDoc!.getElementById(id) as UIKit.Text | undefined;
       el?.setProperties({ text });
     };
-    setText('result-text', won ? 'VICTORY!' : 'CITADEL FELL');
-    setText('final-score', `Score: ${this.game.score} (${this.game.difficulty.toUpperCase()})`);
-    setText('final-wave', `Wave: ${this.game.wave}/${TOTAL_WAVES}`);
+    setText('result-text', won ? 'CITADEL HELD!' : 'CITADEL FELL');
+    const scoreLabel = this.game.endlessMode
+      ? `Score: ${this.game.score} (${this.game.difficulty.toUpperCase()} ENDLESS)`
+      : `Score: ${this.game.score} (${this.game.difficulty.toUpperCase()})`;
+    setText('final-score', scoreLabel);
+    setText('final-wave', `Wave: ${this.game.wave}/${this.game.endlessMode ? '∞' : TOTAL_WAVES}${endlessLabel}`);
     setText('final-kills', `Kills: ${this.game.totalKills} | Max Combo: ${this.game.maxCombo}x`);
     setText('final-ach', `New Achievements: ${this.game.pendingAchievements.length > 0 ? this.game.pendingAchievements.join(', ') : 'None'}`);
   }
@@ -1693,12 +1941,25 @@ class UIManager {
 
   updateWaveAnnounce(): void {
     if (!this.waveAnnounceDoc) return;
-    const waveDef = WAVES[this.game.wave];
+    const waveNum = this.game.wave;
+
+    // Get the wave def
+    let waveDef: WaveDef;
+    if (waveNum < TOTAL_WAVES) {
+      waveDef = WAVES[waveNum];
+    } else {
+      waveDef = generateEndlessWave(waveNum);
+    }
+
     const setText = (id: string, text: string) => {
       const el = this.waveAnnounceDoc!.getElementById(id) as UIKit.Text | undefined;
       el?.setProperties({ text });
     };
-    setText('wave-announce', `WAVE ${this.game.wave + 1}`);
+
+    const waveLabel = this.game.endlessMode
+      ? `ENDLESS WAVE ${waveNum + 1}`
+      : `WAVE ${waveNum + 1}`;
+    setText('wave-announce', waveLabel);
 
     // Describe enemies
     const enemyDescs: string[] = [];
@@ -1708,15 +1969,63 @@ class UIManager {
     }
     setText('wave-enemies', enemyDescs.join(' + '));
 
-    if (this.game.wave >= 20) {
+    // Wave modifier display
+    const modDef = WAVE_MODIFIER_DEFS[this.game.currentWaveModifier];
+    if (modDef.name) {
+      setText('wave-desc', `${modDef.name}: ${modDef.desc}`);
+      const descEl = this.waveAnnounceDoc.getElementById('wave-desc') as UIKit.Text | undefined;
+      descEl?.setProperties({ color: modDef.color });
+    } else if (this.game.endlessMode) {
+      setText('wave-desc', 'They never stop coming...');
+    } else if (waveNum >= 20) {
       setText('wave-desc', 'FINAL WAVES - Hold the line!');
-    } else if (this.game.wave >= 10) {
+    } else if (waveNum >= 10) {
       setText('wave-desc', 'They grow stronger...');
-    } else if (this.game.wave >= 5) {
+    } else if (waveNum >= 5) {
       setText('wave-desc', 'New threats approaching!');
     } else {
       setText('wave-desc', 'Incoming enemies!');
     }
+  }
+
+  updateStats(): void {
+    if (!this.statsDoc) return;
+    const g = this.game;
+    const s = g.save;
+    const setText = (id: string, text: string) => {
+      const el = this.statsDoc!.getElementById(id) as UIKit.Text | undefined;
+      el?.setProperties({ text });
+    };
+
+    setText('stat-waves', `Best Wave: ${s.highWave} | Games: ${s.gamesPlayed}`);
+    setText('stat-score', `Best Score: ${s.bestScore} | Wins: ${s.wins}`);
+
+    const totalMinutes = Math.floor(g.gameTimeSeconds / 60);
+    const totalSecs = Math.floor(g.gameTimeSeconds % 60);
+    setText('stat-time', `Last Game Time: ${totalMinutes}:${totalSecs.toString().padStart(2, '0')}`);
+    setText('stat-difficulty', `Last Difficulty: ${g.difficulty.toUpperCase()}`);
+
+    setText('stat-gold-earned', `Gold Earned: ${g.totalGoldEarned} | Total: ${s.totalGold}`);
+    setText('stat-gold-spent', `Gold Spent: ${g.totalGoldSpent}`);
+    setText('stat-interest', `Interest Earned: ${g.totalInterestEarned}`);
+
+    setText('stat-kills', `Total Kills: ${s.totalKills}`);
+    setText('stat-combo', `Max Combo: ${g.maxCombo}x`);
+    setText('stat-towers-built', `Towers Built: ${s.towersBuilt}`);
+    setText('stat-towers-sold', `Towers Sold: ${g.towersSoldThisGame}`);
+
+    setText('stat-laser-kills', `Laser: ${g.towerKillsByType.laser} kills`);
+    setText('stat-pulse-kills', `Pulse: ${g.towerKillsByType.pulse} kills`);
+    setText('stat-slow-kills', `Slow: ${g.towerKillsByType.slow} kills`);
+    setText('stat-sniper-kills', `Sniper: ${g.towerKillsByType.sniper} kills`);
+    setText('stat-chain-kills', `Chain: ${g.towerKillsByType.chain} kills`);
+
+    const modsEncountered = Array.from(g.modifiersEncountered)
+      .map(m => WAVE_MODIFIER_DEFS[m].name)
+      .filter(Boolean);
+    setText('stat-modifiers', modsEncountered.length > 0
+      ? `Encountered: ${modsEncountered.join(', ')}`
+      : 'None encountered');
   }
 
   updateVisibility(): void {
@@ -1733,9 +2042,11 @@ class UIManager {
     show(this.towerInfoEntity, this.game.screen === 'playing' && this.game.selectedTower !== null);
     show(this.achievementsEntity, this.game.screen === 'achievements');
     show(this.waveAnnounceEntity, this.game.screen === 'playing' && this.game.showWaveAnnounce);
+    show(this.statsEntity, this.game.screen === 'stats');
 
     if (this.game.screen === 'gameover') this.updateGameover();
     if (this.game.screen === 'achievements') this.updateAchievements();
+    if (this.game.screen === 'stats') this.updateStats();
     if (this.game.showWaveAnnounce) this.updateWaveAnnounce();
     if (this.game.selectedTower) this.updateTowerInfo();
   }
@@ -1754,6 +2065,7 @@ class GameSystem extends createSystem({
   towerInfoPanels: { required: [PanelUI, PanelDocument], where: [eq(PanelUI, 'config', './ui/tower-info.json')] },
   achievementsPanels: { required: [PanelUI, PanelDocument], where: [eq(PanelUI, 'config', './ui/achvlist.json')] },
   waveAnnouncePanels: { required: [PanelUI, PanelDocument], where: [eq(PanelUI, 'config', './ui/wave-announce.json')] },
+  statsPanels: { required: [PanelUI, PanelDocument], where: [eq(PanelUI, 'config', './ui/stats.json')] },
 }) {
   private game!: GameState;
   private logic!: GameLogic;
@@ -1811,6 +2123,11 @@ class GameSystem extends createSystem({
     this.queries.waveAnnouncePanels.subscribe('qualify', (entity) => {
       const doc = PanelDocument.data.document[entity.index] as UIKitDocument;
       if (doc) this.ui.bindWaveAnnounce(doc, entity);
+      this.ui.updateVisibility();
+    });
+    this.queries.statsPanels.subscribe('qualify', (entity) => {
+      const doc = PanelDocument.data.document[entity.index] as UIKitDocument;
+      if (doc) this.ui.bindStats(doc, entity);
       this.ui.updateVisibility();
     });
   }
@@ -1978,6 +2295,7 @@ async function main() {
     { config: './ui/tower-info.json', pos: [0.55, -0.1, -1.2], name: 'tower-info' },
     { config: './ui/achvlist.json', pos: [0, 0, -1.5], name: 'achievements' },
     { config: './ui/wave-announce.json', pos: [0, 0.15, -1.3], name: 'wave-announce' },
+    { config: './ui/stats.json', pos: [0, 0, -1.5], name: 'stats' },
   ];
 
   for (const pc of panelConfigs) {

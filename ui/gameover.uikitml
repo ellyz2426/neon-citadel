@@ -81,5 +81,18 @@
       textAlign="center"
       cursor="pointer"
     >MAIN MENU</text>
+
+    <text
+      name="btn-stats-gameover"
+      fontSize="12"
+      color="#88ccee"
+      backgroundColor="#112233"
+      padding="6"
+      borderRadius="6"
+      borderColor="#336688"
+      borderWidth="1"
+      textAlign="center"
+      cursor="pointer"
+    >VIEW STATS</text>
   </container>
 </container>

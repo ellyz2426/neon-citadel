@@ -56,7 +56,12 @@
     <text name="ach-26" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Big Spender - Spend 2000+ gold</text>
     <text name="ach-27" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Laser Focus - 30 kills with Laser</text>
     <text name="ach-28" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Fortress - Have 15 towers at once</text>
-    <text name="ach-29" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Hard Won - Beat game on Hard</text>
+    <text name="ach-29" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Hard Won - Beat wave 25 on Hard</text>
+    <text name="ach-30" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Endless 5 - Survive 5 endless waves</text>
+    <text name="ach-31" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Endless 10 - Survive 10 endless waves</text>
+    <text name="ach-32" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Shield Breaker - Beat a shielded wave</text>
+    <text name="ach-33" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Modifier Master - All 5 wave modifiers</text>
+    <text name="ach-34" fontSize="10" color="#446688" padding="4" backgroundColor="#112233" borderRadius="3">Interest Earner - 100+ gold from interest</text>
   </container>
 
   <text
